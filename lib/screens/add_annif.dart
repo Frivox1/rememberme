@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Importation de la classe DateFormat
+import 'package:intl/intl.dart';
+import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/widgets/navbar.dart';
+import 'package:hive/hive.dart';
 
 class AddAnnifScreen extends StatefulWidget {
   const AddAnnifScreen({
@@ -42,7 +44,7 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Colors.pink, // Change the primary color
+              primary: Colors.pink,
             ),
           ),
           child: child!,
@@ -51,12 +53,57 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
     );
 
     if (picked != null && picked != DateTime.now()) {
-      // Formatage de la date sélectionnée
       final formattedDate = DateFormat('dd/MM/yyyy').format(picked);
       setState(() {
         _birthdayController.text = formattedDate;
       });
     }
+  }
+
+  Future<void> _saveBirthday() async {
+    final name = _nameController.text;
+    final birthdayText = _birthdayController.text;
+    final giftIdeas = _giftIdeasController.text;
+
+    // Vérifier si la date est au format correct "dd/MM/yyyy"
+    final RegExp dateRegex = RegExp(r'^\d{2}/\d{2}/\d{4}$');
+    if (!dateRegex.hasMatch(birthdayText)) {
+      // Afficher un message d'erreur si le format de la date est incorrect
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content:
+                Text('Invalid date format. Please use dd/MM/yyyy format.')),
+      );
+      return;
+    }
+
+    // Convertir la date en DateTime
+    final List<String> dateParts = birthdayText.split('/');
+    final formattedDate = DateTime(int.parse(dateParts[2]),
+        int.parse(dateParts[1]), int.parse(dateParts[0]));
+
+    final birthdayObject = Birthday(
+      name: name,
+      birthday: formattedDate,
+      giftIdeas: giftIdeas,
+    );
+
+    // Ouvrir la boîte Hive pour accéder aux données
+    final Box<Birthday> box = await Hive.openBox<Birthday>('birthdays');
+
+    // Ajouter l'anniversaire à la boîte Hive
+    await box.add(birthdayObject);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Birthday added successfully')),
+    );
+
+    _nameController.clear();
+    _birthdayController.clear();
+    _giftIdeasController.clear();
+
+    // Rediriger vers la page ListScreen après avoir ajouté l'anniversaire
+    Navigator.pushReplacementNamed(context, '/list');
   }
 
   @override
@@ -78,7 +125,6 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
         child: ListView(
           children: [
             const SizedBox(height: 35),
-            // Champ de saisie pour le nom
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(
@@ -90,63 +136,49 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
               ),
             ),
             const SizedBox(height: 35),
-            // Champ de saisie pour la date d'anniversaire
             TextFormField(
               controller: _birthdayController,
               onTap: () {
                 _selectDate(context);
               },
-              readOnly: true, // Le champ de saisie est désactivé
+              readOnly: true,
               decoration: const InputDecoration(
                 labelText: 'Birthday',
-                labelStyle: TextStyle(
-                    color: Colors.pink), // Couleur du texte du libellé
+                labelStyle: TextStyle(color: Colors.pink),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink),
                 ),
               ),
             ),
             const SizedBox(height: 35),
-            // Champ de saisie pour les idées cadeaux
             TextFormField(
               controller: _giftIdeasController,
               decoration: const InputDecoration(
                 labelText: 'Gift Ideas',
-                labelStyle: TextStyle(
-                    color: Colors.pink), // Couleur du texte du libellé
+                labelStyle: TextStyle(color: Colors.pink),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink),
                 ),
               ),
-              maxLines: null, // Permet plusieurs lignes de texte
+              maxLines: null,
             ),
             const SizedBox(height: 50),
-            // Bouton pour ajouter l'anniversaire
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // Logique pour ajouter l'anniversaire
-                  String name = _nameController.text;
-                  String birthday = _birthdayController.text;
-                  String giftIdeas = _giftIdeasController.text;
-
-                  // Utiliser les données saisies
-                  print(
-                      'Name: $name, Birthday: $birthday, Gift Ideas: $giftIdeas');
-                },
+                onPressed: _saveBirthday,
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.pink, // Text color
+                  backgroundColor: Colors.pink,
                   textStyle: const TextStyle(
                     fontSize: 24,
-                  ), // Button color
+                  ),
                   padding: const EdgeInsets.symmetric(
                     vertical: 15,
                     horizontal: 30,
-                  ), // Padding
+                  ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10), // Rounded corners
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 child: const Text('Add Birthday'),
