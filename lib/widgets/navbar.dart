@@ -4,7 +4,7 @@ import 'package:rememberme/screens/home_screen.dart';
 import 'package:rememberme/screens/list_screen.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
-  const CustomBottomNavBar({Key? key});
+  const CustomBottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class CustomBottomNavBar extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (BuildContext context) {
-                    return HomeScreen();
+                    return const HomeScreen();
                   },
                 ),
               );
@@ -36,7 +36,7 @@ class CustomBottomNavBar extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (BuildContext context) {
-                    return AddAnnifScreen();
+                    return const AddAnnifScreen();
                   },
                 ),
               );
@@ -51,7 +51,7 @@ class CustomBottomNavBar extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (BuildContext context) {
-                    return ListScreen();
+                    return const ListScreen();
                   },
                 ),
               );

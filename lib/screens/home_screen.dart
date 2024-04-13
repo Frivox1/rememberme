@@ -3,6 +3,8 @@ import 'package:rememberme/widgets/navbar.dart';
 import 'package:rememberme/widgets/calendar.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,15 +80,15 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
+          const Padding(
+            padding: EdgeInsets.all(15.0),
             child: MinimalCalendar(
                 events: {}), // Remplacez les données factices par les vraies données
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
         ],
       ),
-      bottomNavigationBar: CustomBottomNavBar(),
+      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 }

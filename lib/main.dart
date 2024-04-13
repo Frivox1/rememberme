@@ -4,10 +4,12 @@ import 'package:rememberme/screens/home_screen.dart';
 import 'package:rememberme/screens/list_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,15 +17,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.pink,
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           selectedItemColor: Colors.white,
         ),
       ),
       initialRoute: '/home',
       routes: {
-        '/home': (context) => HomeScreen(),
-        '/list': (context) => ListScreen(),
-        '/add': (context) => AddAnnifScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/list': (context) => const ListScreen(),
+        '/add': (context) => const AddAnnifScreen(),
       },
     );
   }
