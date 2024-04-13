@@ -4,7 +4,7 @@ import 'package:table_calendar/table_calendar.dart';
 class MinimalCalendar extends StatelessWidget {
   final Map<DateTime, List<dynamic>> events;
 
-  const MinimalCalendar({super.key, required this.events});
+  const MinimalCalendar({Key? key, required this.events}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +17,7 @@ class MinimalCalendar extends StatelessWidget {
       firstDay: startOfYear,
       lastDay: endOfYear,
       calendarFormat: CalendarFormat.month,
-      eventLoader: (day) =>
-          events[day] ?? [], // Charger les événements pour chaque jour
+      eventLoader: (day) => events[day] ?? [],
       headerStyle: const HeaderStyle(
         formatButtonVisible: false,
       ),
@@ -34,14 +33,25 @@ class MinimalCalendar extends StatelessWidget {
       ),
       calendarBuilders: CalendarBuilders(
         markerBuilder: (context, date, events) {
-          return Column(
-            children: events.map((event) {
-              return Text(
-                event.toString(),
-                style: const TextStyle(fontSize: 12),
-              );
-            }).toList(),
-          );
+          final List<dynamic> birthdays = events;
+          if (birthdays.isNotEmpty) {
+            // Vérifie si la liste d'anniversaires n'est pas vide
+            return Row(
+              children: [
+                Container(
+                  width: 6,
+                  height: 6,
+                  margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                  decoration: BoxDecoration(
+                    color: Colors
+                        .red, // Couleur de marqueur pour les anniversaires
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ],
+            );
+          }
+          return null;
         },
       ),
     );

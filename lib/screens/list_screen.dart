@@ -11,7 +11,7 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
-  Period _selectedPeriod = Period.Week;
+  Period _selectedPeriod = Period.Month;
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +70,34 @@ class _ListScreenState extends State<ListScreen> {
                   } else {
                     final Box<Birthday> box = snapshot.data!;
                     final List<Birthday> birthdays = box.values.toList();
+                    List<Birthday> filteredBirthdays = [];
+                    final now = DateTime.now();
+                    switch (_selectedPeriod) {
+                      case Period.Week:
+                        final startOfWeek =
+                            now.subtract(Duration(days: now.weekday - 1));
+                        final endOfWeek = startOfWeek.add(Duration(days: 7));
+                        filteredBirthdays = birthdays
+                            .where((birthday) =>
+                                birthday.birthday.month == now.month &&
+                                birthday.birthday.day >= startOfWeek.day &&
+                                birthday.birthday.day <= endOfWeek.day)
+                            .toList();
+                        break;
+                      case Period.Month:
+                        filteredBirthdays = birthdays
+                            .where((birthday) =>
+                                birthday.birthday.month == now.month)
+                            .toList();
+                        break;
+                      case Period.Year:
+                        filteredBirthdays = birthdays;
+                        break;
+                    }
                     return ListView.builder(
-                      itemCount: birthdays.length,
+                      itemCount: filteredBirthdays.length,
                       itemBuilder: (BuildContext context, int index) {
-                        final Birthday birthday = birthdays[index];
+                        final Birthday birthday = filteredBirthdays[index];
                         final age = _calculateAge(birthday.birthday);
                         return ListTile(
                           contentPadding: const EdgeInsets.symmetric(
@@ -108,7 +132,7 @@ class _ListScreenState extends State<ListScreen> {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                'Age: $age',
+                                'Age celebrated: $age',
                                 style: const TextStyle(
                                   fontSize: 16.0,
                                 ),
@@ -173,7 +197,10 @@ class _ListScreenState extends State<ListScreen> {
               onPressed: () {
                 Navigator.of(context).pop(); // Ferme la boîte de dialogue
               },
-              child: const Text('Cancel'),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
             TextButton(
               onPressed: () {
