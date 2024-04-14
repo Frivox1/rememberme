@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rememberme/providers/premium_provider.dart';
 import 'package:rememberme/screens/language_screen.dart';
+import 'package:share/share.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -105,7 +106,9 @@ class SettingsScreen extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.share),
                 title: const Text('Share the app'),
-                onTap: () {},
+                onTap: () {
+                  Share.share('Check out this awesome app!');
+                },
               ),
               const Divider(),
               ListTile(
