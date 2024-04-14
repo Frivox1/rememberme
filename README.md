@@ -10,6 +10,7 @@ RememberMe is a work-in-progress application designed to help you keep track of 
 
 - **Birthday Reminders**: Create reminders for birthdays of your friends and family.
 - **Filtering Options**: Easily filter birthdays by week, month, or year.
+- **Notification System**: Receive notifications on the day of the birthday.
 - **Upcoming Features**: Stay tuned for upcoming features like in-app purchases and multi-language support.
 
 ## Cloning the Project 🔍
