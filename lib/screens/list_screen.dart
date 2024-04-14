@@ -4,7 +4,7 @@ import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/widgets/navbar.dart';
 
 class ListScreen extends StatefulWidget {
-  const ListScreen({super.key});
+  const ListScreen({Key? key}) : super(key: key);
 
   @override
   _ListScreenState createState() => _ListScreenState();
@@ -44,16 +44,15 @@ class _ListScreenState extends State<ListScreen> {
               },
               borderRadius: BorderRadius.circular(
                 20.0,
-              ), // Définir le rayon pour arrondir les bords
-              selectedBorderColor: Colors
-                  .white, // Couleur de la bordure lorsqu'un bouton est sélectionné
+              ),
+              selectedBorderColor: Colors.white,
               selectedColor: Colors.white,
               fillColor: Colors.pink[400],
               children: [
                 _buildPeriodButton('This Week', Period.Week),
                 _buildPeriodButton('This Month', Period.Month),
                 _buildPeriodButton('This Year', Period.Year),
-              ], // Couleur de remplissage lorsqu'un bouton est désélectionné
+              ],
             ),
           ),
           const SizedBox(height: 20),
@@ -94,6 +93,12 @@ class _ListScreenState extends State<ListScreen> {
                       case Period.Year:
                         filteredBirthdays = birthdays;
                         break;
+                    }
+                    if (filteredBirthdays.isEmpty) {
+                      return const Center(
+                        child: Text('No birthdays for selected period',
+                            style: TextStyle(fontSize: 20.0)),
+                      );
                     }
                     return ListView.builder(
                       itemCount: filteredBirthdays.length,
@@ -178,14 +183,12 @@ class _ListScreenState extends State<ListScreen> {
     return age + 1;
   }
 
-  // Méthode pour supprimer l'anniversaire
   void _deleteBirthday(Birthday birthday, Box<Birthday> box) {
     box.delete(birthday.key);
-    Navigator.of(context).pop(); // Ferme la boîte de dialogue
-    setState(() {}); // Met à jour l'interface utilisateur
+    Navigator.of(context).pop();
+    setState(() {});
   }
 
-  // Méthode pour afficher la boîte de dialogue de confirmation de suppression
   void _showDeleteConfirmationDialog(Birthday birthday, Box<Birthday> box) {
     showDialog(
       context: context,
@@ -196,7 +199,7 @@ class _ListScreenState extends State<ListScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Ferme la boîte de dialogue
+                Navigator.of(context).pop();
               },
               child: const Text(
                 'Cancel',
@@ -205,7 +208,7 @@ class _ListScreenState extends State<ListScreen> {
             ),
             TextButton(
               onPressed: () {
-                _deleteBirthday(birthday, box); // Supprime l'anniversaire
+                _deleteBirthday(birthday, box);
               },
               child: const Text(
                 'Delete',

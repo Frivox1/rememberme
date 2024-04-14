@@ -101,6 +101,12 @@ class HomeScreen extends StatelessWidget {
                                 birthday.birthday.day >= startOfWeek.day &&
                                 birthday.birthday.day <= endOfWeek.day)
                             .toList();
+                        if (birthdaysThisWeek.isEmpty) {
+                          return Center(
+                            child: Text('No birthdays this week',
+                                style: const TextStyle(fontSize: 20)),
+                          );
+                        }
                         return ListView.builder(
                           shrinkWrap: true,
                           itemCount: birthdaysThisWeek.length,
