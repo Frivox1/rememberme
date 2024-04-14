@@ -4,13 +4,13 @@ Welcome to RememberMe, your personal assistant for never missing birthdays!
 
 ## Introduction 👋
 
-RememberMe is a work-in-progress application designed to help you keep track of birthdays and __never__ miss an important date. While still under development, the app already allows you to create birthday reminders, view upcoming birthdays, and filter them by week, month, or year.
+RememberMe is a work-in-progress application designed to help you keep track of birthdays and <u>never</u>  miss an important date. While still under development, the app already allows you to create birthday reminders, view upcoming birthdays, filter them by week, month, or year and send notifications on the day of the birthday.
 
 ## Features 📝
 
 - **Birthday Reminders**: Create reminders for birthdays of your friends and family.
 - **Filtering Options**: Easily filter birthdays by week, month, or year.
-- **Upcoming Features**: Stay tuned for upcoming features like notifications on the day of birthdays, in-app purchases, and multi-language support.
+- **Upcoming Features**: Stay tuned for upcoming features like in-app purchases and multi-language support.
 
 ## Cloning the Project 🔍
 
@@ -53,6 +53,10 @@ flutter run
 - **Flutter**: Google's UI toolkit for building cross-platform applications.
 - **Dart**: Client-optimized programming language for multi-platform apps.
 - **Hive**: Lightweight and fast NoSQL database for Flutter applications.
+
+### Libraries:
+- **WorkManager**: Library for managing background tasks in Flutter applications.
+- **Flutter Local Notifications**: Library for displaying local notifications in Flutter applications.
 
 ## Contact 📲
 
