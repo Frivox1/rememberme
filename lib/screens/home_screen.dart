@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:rememberme/models/birthday_model.dart';
+import 'package:rememberme/screens/settings.dart';
 import 'package:rememberme/widgets/navbar.dart';
 import 'package:rememberme/widgets/calendar.dart';
 
@@ -23,7 +24,9 @@ class HomeScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.settings, color: Colors.white, size: 35),
           onPressed: () {
-            // Ajoutez ici la logique pour ouvrir l'écran des réglages
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return SettingsScreen();
+            }));
           },
         ),
       ),
