@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class LanguageScreen extends StatelessWidget {
   final double fontSize = 24;
 
+  const LanguageScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Choose Language',
           style: TextStyle(
             fontSize: 30,
@@ -18,7 +20,7 @@ class LanguageScreen extends StatelessWidget {
         padding: const EdgeInsets.all(12.0),
         child: ListView(
           children: <Widget>[
-            SizedBox(height: 20.0),
+            const SizedBox(height: 20.0),
             ListTile(
               title: Text(
                 '🇫🇷 Français',
@@ -31,7 +33,7 @@ class LanguageScreen extends StatelessWidget {
                 Navigator.pop(context, 'Français');
               },
             ),
-            Divider(), // Ajouter un diviseur
+            const Divider(), // Ajouter un diviseur
             ListTile(
               title: Text(
                 '🇬🇧 English',
@@ -44,7 +46,7 @@ class LanguageScreen extends StatelessWidget {
                 Navigator.pop(context, 'English');
               },
             ),
-            Divider(), // Ajouter un diviseur
+            const Divider(), // Ajouter un diviseur
             ListTile(
               title: Text(
                 '🇳🇱 Nederlands',
@@ -57,7 +59,7 @@ class LanguageScreen extends StatelessWidget {
                 Navigator.pop(context, 'Nederlands');
               },
             ),
-            Divider(), // Ajouter un diviseur
+            const Divider(), // Ajouter un diviseur
             ListTile(
               title: Text(
                 '🇩🇪 Deutsch',

@@ -25,7 +25,7 @@ class HomeScreen extends StatelessWidget {
           icon: const Icon(Icons.settings, color: Colors.white, size: 35),
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return SettingsScreen();
+              return const SettingsScreen();
             }));
           },
         ),
@@ -60,7 +60,7 @@ class HomeScreen extends StatelessWidget {
                     final now = DateTime.now();
                     final startOfWeek =
                         now.subtract(Duration(days: now.weekday - 1));
-                    final endOfWeek = startOfWeek.add(Duration(days: 7));
+                    final endOfWeek = startOfWeek.add(const Duration(days: 7));
                     final birthdaysThisWeek = birthdays
                         .where((birthday) =>
                             birthday.birthday.month == now.month &&

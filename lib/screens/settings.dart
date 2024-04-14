@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'language_screen.dart'; // Importez votre fichier LanguageScreen.dart
 
 class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
@@ -24,12 +26,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       body: ListView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         children: <Widget>[
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           ListTile(
-            leading: Icon(Icons.star),
-            title: Row(
+            leading: const Icon(Icons.arrow_upward),
+            title: const Row(
               children: [
                 Text(
                   'Upgrade to ',
@@ -52,10 +54,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               });
             },
           ),
-          Divider(), // Ajouter un diviseur
+          const Divider(), // Ajouter un diviseur
           ListTile(
-            leading: Icon(Icons.notifications),
-            title: Text('Notifications'),
+            leading: const Icon(Icons.notifications),
+            title: const Text('Notifications'),
             trailing: Switch(
               value: _notificationsEnabled,
               onChanged: (value) {
@@ -66,19 +68,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
               activeColor: Colors.pink, // Définir la couleur du bouton
             ),
           ),
-          Divider(), // Ajouter un diviseur
+          const Divider(), // Ajouter un diviseur
           ListTile(
-            leading: Icon(Icons.language),
-            title: Text('Language'),
+            leading: const Icon(Icons.language),
+            title: const Text('Language'),
             onTap: () {
               // Naviguer vers la nouvelle page LanguageScreen
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => LanguageScreen()),
+                MaterialPageRoute(builder: (context) => const LanguageScreen()),
               );
             },
           ),
-          Divider(), // Ajouter un diviseur
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.star),
+            title: const Text('Rate the app'),
+            onTap: () {
+              // Votre logique pour changer le thème
+            },
+          ),
         ],
       ),
     );
@@ -86,7 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 }
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: SettingsScreen(),
   ));
 }

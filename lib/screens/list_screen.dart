@@ -4,7 +4,7 @@ import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/widgets/navbar.dart';
 
 class ListScreen extends StatefulWidget {
-  const ListScreen({Key? key});
+  const ListScreen({super.key});
 
   @override
   _ListScreenState createState() => _ListScreenState();
@@ -76,7 +76,8 @@ class _ListScreenState extends State<ListScreen> {
                       case Period.Week:
                         final startOfWeek =
                             now.subtract(Duration(days: now.weekday - 1));
-                        final endOfWeek = startOfWeek.add(Duration(days: 7));
+                        final endOfWeek =
+                            startOfWeek.add(const Duration(days: 7));
                         filteredBirthdays = birthdays
                             .where((birthday) =>
                                 birthday.birthday.month == now.month &&

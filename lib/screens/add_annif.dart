@@ -6,8 +6,8 @@ import 'package:hive/hive.dart';
 
 class AddAnnifScreen extends StatefulWidget {
   const AddAnnifScreen({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _AddAnnifScreenState createState() => _AddAnnifScreenState();
@@ -70,9 +70,13 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
     if (!dateRegex.hasMatch(birthdayText)) {
       // Afficher un message d'erreur si le format de la date est incorrect
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content:
-                Text('Invalid date format. Please use dd/MM/yyyy format.')),
+        SnackBar(
+          content: const Text(
+            'Invalid date format. Please use dd/MM/yyyy format.',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.pink[200],
+        ),
       );
       return;
     }
@@ -95,7 +99,13 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
     await box.add(birthdayObject);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Birthday added successfully')),
+      SnackBar(
+        content: const Text(
+          'Birthday added successfully',
+          style: TextStyle(color: Colors.white, fontSize: 20),
+        ),
+        backgroundColor: Colors.pink[200],
+      ),
     );
 
     _nameController.clear();

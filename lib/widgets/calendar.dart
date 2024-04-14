@@ -4,7 +4,7 @@ import 'package:table_calendar/table_calendar.dart';
 class MinimalCalendar extends StatelessWidget {
   final Map<DateTime, List<dynamic>> events;
 
-  const MinimalCalendar({Key? key, required this.events}) : super(key: key);
+  const MinimalCalendar({super.key, required this.events});
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class MinimalCalendar extends StatelessWidget {
                   width: 6,
                   height: 6,
                   margin: const EdgeInsets.symmetric(horizontal: 1.5),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors
                         .red, // Couleur de marqueur pour les anniversaires
                     shape: BoxShape.circle,
