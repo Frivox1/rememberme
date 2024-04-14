@@ -6,8 +6,8 @@ import 'package:hive/hive.dart';
 
 class AddAnnifScreen extends StatefulWidget {
   const AddAnnifScreen({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   _AddAnnifScreenState createState() => _AddAnnifScreenState();

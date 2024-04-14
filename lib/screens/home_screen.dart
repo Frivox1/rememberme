@@ -5,7 +5,7 @@ import 'package:rememberme/widgets/navbar.dart';
 import 'package:rememberme/widgets/calendar.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key});
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -2,6 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
+	<key>UIUserNotificationTypes</key>
+    <integer>7</integer>
+
+	<key>NSUserNotificationUsageDescription</key>
+	<string>Never miss a birthday: Give Rememberme permission to send you notifications so you never forget an important birthday.</string>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
