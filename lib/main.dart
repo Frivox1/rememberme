@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -6,9 +7,11 @@ import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/screens/add_annif.dart';
 import 'package:rememberme/screens/home_screen.dart';
 import 'package:rememberme/screens/list_screen.dart';
+import 'package:rememberme/screens/settings.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
+import 'package:rememberme/providers/premium_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +50,14 @@ void main() async {
     initialDelay: Duration(hours: 24 - DateTime.now().hour + 7, minutes: 30),
   );
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      // Envelopper MaterialApp avec ChangeNotifierProvider
+      create: (context) =>
+          PremiumProvider(), // Créer une instance de PremiumProvider
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyAppLifecycleObserver extends WidgetsBindingObserver {
@@ -127,7 +137,7 @@ tz.TZDateTime _nextInstanceOfSevenThirty() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -143,6 +153,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         '/list': (context) => const ListScreen(),
         '/add': (context) => const AddAnnifScreen(),
+        '/settings': (context) => const SettingsScreen(),
       },
     );
   }
