@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/models/app_settings.dart';
@@ -14,6 +13,9 @@ import 'package:rememberme/welcome/select_lang.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:rememberme/l10n/l10n.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -163,6 +165,14 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.pink,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      supportedLocales: L10n.all,
+      locale: const Locale('de'),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       home: FutureBuilder(
         future: Hive.openBox<AppSettings>('app_settings'),
         builder: (context, AsyncSnapshot<Box<AppSettings>> snapshot) {

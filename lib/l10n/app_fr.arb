@@ -1,0 +1,15 @@
+{
+    "@language": {
+      "description": "La langue actuelle"
+    },
+      "title": "RememberMe",
+      "youAre": "Vous êtes ",
+      "premium": "Premium",
+      "notPremium": "Non Premium",
+      "birthdayOfTheWeek": "Anniversaire de la semaine",
+      "noBirthdaysThisWeek": "Aucun anniversaire cette semaine",
+      "giftIdeas": "Idées de cadeaux : ",
+      "ageCelebrated": "Âge célébré : ",
+      "monthView": "Vue mensuelle"
+}
+  

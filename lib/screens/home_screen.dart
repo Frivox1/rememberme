@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:hive/hive.dart';
 import 'package:rememberme/models/birthday_model.dart';
@@ -15,9 +16,9 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink[200],
-        title: const Text(
-          'RememberMe',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.title,
+          style: const TextStyle(
             fontSize: 30,
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -33,7 +34,6 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       body: Consumer<PremiumProvider>(
-        // Utiliser Consumer pour accéder à PremiumProvider
         builder: (context, premiumProvider, _) {
           return ListView(
             children: [
@@ -44,7 +44,7 @@ class HomeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'You are ',
+                      AppLocalizations.of(context)!.youAre,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -52,25 +52,24 @@ class HomeScreen extends StatelessWidget {
                     ),
                     Text(
                       premiumProvider.isPremium
-                          ? 'Premium'
-                          : 'Not Premium', // Afficher si l'utilisateur est premium ou non
+                          ? AppLocalizations.of(context)!.premium
+                          : AppLocalizations.of(context)!.notPremium,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: premiumProvider.isPremium
                             ? Colors.green
-                            : Colors
-                                .red, // Couleur différente selon le statut Premium
+                            : Colors.red,
                       ),
                     ),
                   ],
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  'Birthday of the Week',
-                  style: TextStyle(
+                  AppLocalizations.of(context)!.birthdayOfTheWeek,
+                  style: const TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
                   ),
@@ -103,8 +102,10 @@ class HomeScreen extends StatelessWidget {
                             .toList();
                         if (birthdaysThisWeek.isEmpty) {
                           return Center(
-                            child: Text('No birthdays this week',
-                                style: const TextStyle(fontSize: 20)),
+                            child: Text(
+                              AppLocalizations.of(context)!.noBirthdaysThisWeek,
+                              style: const TextStyle(fontSize: 20),
+                            ),
                           );
                         }
                         return ListView.builder(
@@ -131,7 +132,7 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      'Gift Ideas: ${birthday.giftIdeas}',
+                                      '${AppLocalizations.of(context)!.giftIdeas}: ${birthday.giftIdeas}',
                                       style: const TextStyle(
                                         fontSize: 16.0,
                                       ),
@@ -150,7 +151,7 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      'Age celebrated: $age',
+                                      '${AppLocalizations.of(context)!.ageCelebrated}: $age',
                                       style: const TextStyle(
                                         fontSize: 16.0,
                                       ),
@@ -170,20 +171,20 @@ class HomeScreen extends StatelessWidget {
                   },
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
                 child: Text(
-                  'Month View',
-                  style: TextStyle(
+                  AppLocalizations.of(context)!.monthView,
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.all(15.0),
-                child: MinimalCalendar(
-                    events: {}), // Remplacez les données factices par les vraies données
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: MinimalCalendar(),
               ),
               const SizedBox(height: 20),
             ],

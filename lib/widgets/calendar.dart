@@ -1,59 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 
 class MinimalCalendar extends StatelessWidget {
-  final Map<DateTime, List<dynamic>> events;
-
-  const MinimalCalendar({super.key, required this.events});
+  const MinimalCalendar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final today = DateTime.now();
-    final startOfYear = DateTime(today.year, 1, 1);
-    final endOfYear = DateTime(today.year, 12, 31);
 
-    return TableCalendar(
-      focusedDay: today,
-      firstDay: startOfYear,
-      lastDay: endOfYear,
-      calendarFormat: CalendarFormat.month,
-      eventLoader: (day) => events[day] ?? [],
-      headerStyle: const HeaderStyle(
-        formatButtonVisible: false,
-      ),
-      calendarStyle: CalendarStyle(
-        todayDecoration: BoxDecoration(
-          color: Colors.pink.withOpacity(0.4),
-          shape: BoxShape.circle,
-        ),
-        selectedDecoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          shape: BoxShape.circle,
-        ),
-      ),
-      calendarBuilders: CalendarBuilders(
-        markerBuilder: (context, date, events) {
-          final List<dynamic> birthdays = events;
-          if (birthdays.isNotEmpty) {
-            // Vérifie si la liste d'anniversaires n'est pas vide
-            return Row(
-              children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  margin: const EdgeInsets.symmetric(horizontal: 1.5),
-                  decoration: const BoxDecoration(
-                    color: Colors
-                        .red, // Couleur de marqueur pour les anniversaires
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ],
-            );
-          }
-          return null;
-        },
-      ),
+    return CalendarCarousel(
+      locale: 'de',
+      todayBorderColor:
+          Colors.transparent, // Couleur de bordure pour le jour actuel
+      todayButtonColor: Colors.transparent, // Couleur du bouton "Today"
+      selectedDayButtonColor: Colors.pink[200]!, // Couleur du jour sélectionné
+      onDayPressed: (DateTime date, List events) {
+        // Gérer l'action lorsqu'un jour est sélectionné
+        print(date);
+      },
+      thisMonthDayBorderColor: Colors
+          .transparent, // Couleur de bordure pour les jours du mois en cours
+      headerMargin:
+          const EdgeInsets.only(bottom: 8.0), // Marge inférieure pour l'en-tête
+      headerTextStyle: const TextStyle(
+          fontSize: 22.0, color: Colors.black, fontWeight: FontWeight.bold),
+      iconColor: Colors.black, // Couleur des icônes
+      todayTextStyle:
+          TextStyle(color: Colors.black), // Style du texte du jour actuel
+      selectedDayTextStyle:
+          TextStyle(color: Colors.white), // Style du texte du jour sélectionné
+      daysTextStyle: TextStyle(color: Colors.black), // Style du texte des jours
+      weekendTextStyle:
+          TextStyle(color: Colors.red), // Style du texte pour les week-ends
+      weekdayTextStyle: TextStyle(
+          color: Colors.pink), // Style du texte pour les jours de la semaine
+      weekDayFormat: WeekdayFormat.short, // Format des jours de la semaine
+      height: 420.0, // Hauteur du calendrier
+      width: MediaQuery.of(context).size.width, // Largeur du calendrier
+      selectedDateTime: today, // Date sélectionnée par défaut
+      firstDayOfWeek:
+          1, // Premier jour de la semaine (0 pour dimanche, 1 pour lundi, etc.)
+      showHeader: true, // Afficher l'en-tête du calendrier
+      customGridViewPhysics:
+          const NeverScrollableScrollPhysics(), // Physique de défilement pour le calendrier
     );
   }
 }
