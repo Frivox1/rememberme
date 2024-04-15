@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rememberme/models/birthday_model.dart';
+import 'package:rememberme/models/app_settings.dart'; // Importe le modèle AppSettings
+import 'package:rememberme/providers/premium_provider.dart';
 import 'package:rememberme/screens/add_annif.dart';
 import 'package:rememberme/screens/home_screen.dart';
 import 'package:rememberme/screens/list_screen.dart';
 import 'package:rememberme/screens/settings.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
-import 'package:rememberme/providers/premium_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final appDocumentDirectory =
-      await path_provider.getApplicationDocumentsDirectory();
-  Hive.init(appDocumentDirectory.path);
+
+  // Initialise Hive
+  await Hive.initFlutter();
   Hive.registerAdapter(BirthdayAdapter());
+  Hive.registerAdapter(
+      AppSettingsAdapter()); // Enregistre l'adaptateur pour AppSettings
+
+  // Ouvre la boîte de données pour les anniversaires et les paramètres de l'application
   await Hive.openBox<Birthday>('birthdays');
+  await Hive.openBox<AppSettings>(
+      'app_settings'); // Ouvre la boîte de données pour les paramètres de l'application
+
   tzdata.initializeTimeZones();
 
+  // Initialise les notifications locales
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   const AndroidInitializationSettings initializationSettingsAndroid =
@@ -41,7 +50,10 @@ void main() async {
           IOSFlutterLocalNotificationsPlugin>()
       ?.requestPermissions(alert: true, badge: true, sound: true);
 
+  // Initialise l'observateur du cycle de vie de l'application
   WidgetsBinding.instance.addObserver(MyAppLifecycleObserver());
+
+  // Initialise WorkManager pour les tâches périodiques
   Workmanager().initialize(callbackDispatcher);
   Workmanager().registerPeriodicTask(
     'birthdayNotificationTask',
@@ -52,9 +64,7 @@ void main() async {
 
   runApp(
     ChangeNotifierProvider(
-      // Envelopper MaterialApp avec ChangeNotifierProvider
-      create: (context) =>
-          PremiumProvider(), // Créer une instance de PremiumProvider
+      create: (context) => PremiumProvider(),
       child: const MyApp(),
     ),
   );
@@ -148,13 +158,68 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.pink,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: '/home',
+      home: FutureBuilder(
+        future: Hive.openBox<AppSettings>('app_settings'),
+        builder: (context, AsyncSnapshot<Box<AppSettings>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            final box = snapshot.data!;
+            final appSettings = box.get('settings',
+                defaultValue: AppSettings(isFirstTime: true));
+            if (appSettings!.isFirstTime) {
+              // Si c'est la première fois que l'application est ouverte
+              return FirstTimeWelcomePage();
+            } else {
+              // Sinon, affiche la page d'accueil
+              return HomeScreen();
+            }
+          } else {
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+        },
+      ),
       routes: {
         '/home': (context) => const HomeScreen(),
         '/list': (context) => const ListScreen(),
         '/add': (context) => const AddAnnifScreen(),
         '/settings': (context) => const SettingsScreen(),
       },
+    );
+  }
+}
+
+class FirstTimeWelcomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Bienvenue'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Page de bienvenue pour la première fois'),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Mettre à jour les paramètres de l'application pour marquer que ce n'est plus la première ouverture
+                final appSettingsBox = Hive.box<AppSettings>('app_settings');
+                final appSettings = appSettingsBox.get('settings',
+                    defaultValue: AppSettings(isFirstTime: true));
+                appSettings?.isFirstTime = false;
+                appSettings?.save();
+                // Naviguer vers la page d'accueil
+                Navigator.pushReplacementNamed(context, '/home');
+              },
+              child: Text('Skip'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
