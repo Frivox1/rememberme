@@ -11,16 +11,18 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.pink[200],
-        title: const Text(
-          'Settings',
-          style: TextStyle(
-            fontSize: 30,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+          backgroundColor: Colors.pink[200],
+          title: const Text(
+            'Settings',
+            style: TextStyle(
+              fontSize: 30,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-      ),
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+          )),
       body: Consumer<PremiumProvider>(
         builder: (context, premiumProvider, _) {
           return ListView(
