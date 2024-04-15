@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rememberme/models/birthday_model.dart';
-import 'package:rememberme/models/app_settings.dart'; // Importe le modèle AppSettings
+import 'package:rememberme/models/app_settings.dart';
 import 'package:rememberme/providers/premium_provider.dart';
 import 'package:rememberme/screens/add_annif.dart';
 import 'package:rememberme/screens/home_screen.dart';
@@ -10,6 +10,7 @@ import 'package:rememberme/screens/list_screen.dart';
 import 'package:rememberme/screens/settings.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:rememberme/welcome/select_lang.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
@@ -54,13 +55,17 @@ void main() async {
   WidgetsBinding.instance.addObserver(MyAppLifecycleObserver());
 
   // Initialise WorkManager pour les tâches périodiques
-  Workmanager().initialize(callbackDispatcher);
-  Workmanager().registerPeriodicTask(
-    'birthdayNotificationTask',
-    'birthdayNotificationTask',
-    frequency: const Duration(days: 1),
-    initialDelay: Duration(hours: 24 - DateTime.now().hour + 7, minutes: 30),
-  );
+  try {
+    Workmanager().initialize(callbackDispatcher);
+    Workmanager().registerPeriodicTask(
+      'birthdayNotificationTask',
+      'birthdayNotificationTask',
+      frequency: const Duration(days: 1),
+      initialDelay: Duration(hours: 24 - DateTime.now().hour + 7, minutes: 30),
+    );
+  } catch (e) {
+    print('WorkManager not supported on this platform: $e');
+  }
 
   runApp(
     ChangeNotifierProvider(
@@ -167,7 +172,7 @@ class MyApp extends StatelessWidget {
                 defaultValue: AppSettings(isFirstTime: true));
             if (appSettings!.isFirstTime) {
               // Si c'est la première fois que l'application est ouverte
-              return FirstTimeWelcomePage();
+              return SelectLang();
             } else {
               // Sinon, affiche la page d'accueil
               return HomeScreen();
@@ -187,39 +192,6 @@ class MyApp extends StatelessWidget {
         '/add': (context) => const AddAnnifScreen(),
         '/settings': (context) => const SettingsScreen(),
       },
-    );
-  }
-}
-
-class FirstTimeWelcomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Bienvenue'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Page de bienvenue pour la première fois'),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Mettre à jour les paramètres de l'application pour marquer que ce n'est plus la première ouverture
-                final appSettingsBox = Hive.box<AppSettings>('app_settings');
-                final appSettings = appSettingsBox.get('settings',
-                    defaultValue: AppSettings(isFirstTime: true));
-                appSettings?.isFirstTime = false;
-                appSettings?.save();
-                // Naviguer vers la page d'accueil
-                Navigator.pushReplacementNamed(context, '/home');
-              },
-              child: Text('Skip'),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
