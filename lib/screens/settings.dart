@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:rememberme/providers/premium_provider.dart';
 import 'package:rememberme/screens/language_screen.dart';
 import 'package:share/share.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -11,18 +12,19 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.pink[200],
-          title: const Text(
-            'Settings',
-            style: TextStyle(
-              fontSize: 30,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          iconTheme: const IconThemeData(
+        backgroundColor: Colors.pink[200],
+        title: Text(
+          AppLocalizations.of(context)!.settings,
+          style: const TextStyle(
+            fontSize: 30,
             color: Colors.white,
-          )),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+      ),
       body: Consumer<PremiumProvider>(
         builder: (context, premiumProvider, _) {
           return ListView(
@@ -34,13 +36,13 @@ class SettingsScreen extends StatelessWidget {
                 title: Row(
                   children: [
                     Text(
-                      'Upgrade to ',
-                      style: TextStyle(
+                      '${AppLocalizations.of(context)!.upgradeTo} ',
+                      style: const TextStyle(
                         color: Colors.black,
                       ),
                     ),
                     Text(
-                      'Premium',
+                      AppLocalizations.of(context)!.premium,
                       style: TextStyle(
                         color: premiumProvider.isPremium
                             ? Colors.green
@@ -57,7 +59,7 @@ class SettingsScreen extends StatelessWidget {
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.notifications),
-                title: const Text('Notifications'),
+                title: Text(AppLocalizations.of(context)!.notifications),
                 trailing: Switch(
                   value: premiumProvider.isPremium,
                   onChanged: (value) {
@@ -65,21 +67,28 @@ class SettingsScreen extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: const Text('Upgrade to Premium'),
-                          content: const Text(
-                              'Upgrade to premium to enable notifications'),
+                          title: Text(
+                            AppLocalizations.of(context)!.upgradeToPremium,
+                          ),
+                          content: Text(
+                            AppLocalizations.of(context)!.messageToPremium,
+                          ),
                           actions: <Widget>[
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text('Cancel'),
+                              child: Text(
+                                AppLocalizations.of(context)!.cancel,
+                              ),
                             ),
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text('OK'),
+                              child: Text(
+                                'OK',
+                              ),
                             ),
                           ],
                         ),
@@ -94,7 +103,7 @@ class SettingsScreen extends StatelessWidget {
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.language),
-                title: const Text('Language'),
+                title: Text(AppLocalizations.of(context)!.language),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -107,7 +116,7 @@ class SettingsScreen extends StatelessWidget {
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.share),
-                title: const Text('Share the app'),
+                title: Text(AppLocalizations.of(context)!.shareTheApp),
                 onTap: () {
                   Share.share('Check out this awesome app!');
                 },
@@ -115,10 +124,8 @@ class SettingsScreen extends StatelessWidget {
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.star),
-                title: const Text('Rate the app'),
-                onTap: () {
-                  // Votre logique pour changer le thème
-                },
+                title: Text(AppLocalizations.of(context)!.rateTheApp),
+                onTap: () {},
               ),
             ],
           );

@@ -3,11 +3,12 @@ import 'package:intl/intl.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/widgets/navbar.dart';
 import 'package:hive/hive.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddAnnifScreen extends StatefulWidget {
   const AddAnnifScreen({
-    super.key,
-  });
+    Key? key, // Ajouter le paramètre manquant ici
+  }) : super(key: key); // Corriger la déclaration du constructeur
 
   @override
   _AddAnnifScreenState createState() => _AddAnnifScreenState();
@@ -60,7 +61,7 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
     }
   }
 
-  Future<void> _saveBirthday() async {
+  Future<void> _saveBirthday(BuildContext context) async {
     final name = _nameController.text;
     final birthdayText = _birthdayController.text;
     final giftIdeas = _giftIdeasController.text;
@@ -71,9 +72,9 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
       // Afficher un message d'erreur si le format de la date est incorrect
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            'Invalid date format. Please use dd/MM/yyyy format.',
-            style: TextStyle(color: Colors.white),
+          content: Text(
+            AppLocalizations.of(context)!.invalidDateFormat,
+            style: const TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.pink[200],
         ),
@@ -100,9 +101,9 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text(
-          'Birthday added successfully',
-          style: TextStyle(color: Colors.white, fontSize: 20),
+        content: Text(
+          AppLocalizations.of(context)!.birthdayAddedSuccessfully,
+          style: const TextStyle(color: Colors.white, fontSize: 20),
         ),
         backgroundColor: Colors.pink[200],
       ),
@@ -121,9 +122,9 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink[200],
-        title: const Text(
-          'Add Birthday',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.addBirthday,
+          style: const TextStyle(
             fontSize: 30,
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -137,10 +138,10 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
             const SizedBox(height: 35),
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                labelStyle: TextStyle(color: Colors.pink),
-                focusedBorder: OutlineInputBorder(
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.name,
+                labelStyle: const TextStyle(color: Colors.pink),
+                focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink),
                 ),
               ),
@@ -152,10 +153,10 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
                 _selectDate(context);
               },
               readOnly: true,
-              decoration: const InputDecoration(
-                labelText: 'Birthday',
-                labelStyle: TextStyle(color: Colors.pink),
-                focusedBorder: OutlineInputBorder(
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.birthday,
+                labelStyle: const TextStyle(color: Colors.pink),
+                focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink),
                 ),
               ),
@@ -163,10 +164,10 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
             const SizedBox(height: 35),
             TextFormField(
               controller: _giftIdeasController,
-              decoration: const InputDecoration(
-                labelText: 'Gift Ideas',
-                labelStyle: TextStyle(color: Colors.pink),
-                focusedBorder: OutlineInputBorder(
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.giftIdeas,
+                labelStyle: const TextStyle(color: Colors.pink),
+                focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink),
                 ),
               ),
@@ -176,7 +177,7 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _saveBirthday,
+                onPressed: () => _saveBirthday(context),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.pink,
@@ -191,7 +192,7 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                child: const Text('Add Birthday'),
+                child: Text(AppLocalizations.of(context)!.addBirthday),
               ),
             ),
           ],

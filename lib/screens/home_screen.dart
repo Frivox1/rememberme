@@ -132,7 +132,7 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      '${AppLocalizations.of(context)!.giftIdeas}: ${birthday.giftIdeas}',
+                                      '${AppLocalizations.of(context)!.giftIdeas} ${birthday.giftIdeas}',
                                       style: const TextStyle(
                                         fontSize: 16.0,
                                       ),
@@ -151,7 +151,7 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      '${AppLocalizations.of(context)!.ageCelebrated}: $age',
+                                      '${AppLocalizations.of(context)!.ageCelebrated} $age',
                                       style: const TextStyle(
                                         fontSize: 16.0,
                                       ),

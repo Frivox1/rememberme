@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:rememberme/screens/add_annif.dart';
-import 'package:rememberme/screens/home_screen.dart';
-import 'package:rememberme/screens/list_screen.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   const CustomBottomNavBar({super.key});
@@ -17,14 +14,8 @@ class CustomBottomNavBar extends StatelessWidget {
             icon: const Icon(Icons.home, color: Colors.white),
             iconSize: 35,
             onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return const HomeScreen();
-                  },
-                ),
-              );
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/home', (route) => false);
             },
             color: Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
           ),
@@ -32,14 +23,8 @@ class CustomBottomNavBar extends StatelessWidget {
             icon: const Icon(Icons.add, color: Colors.white),
             iconSize: 35,
             onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return const AddAnnifScreen();
-                  },
-                ),
-              );
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/add', (route) => false);
             },
             color: Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
           ),
@@ -47,14 +32,8 @@ class CustomBottomNavBar extends StatelessWidget {
             icon: const Icon(Icons.list, color: Colors.white),
             iconSize: 35,
             onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return const ListScreen();
-                  },
-                ),
-              );
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/list', (route) => false);
             },
             color: Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/widgets/navbar.dart';
@@ -18,9 +19,9 @@ class _ListScreenState extends State<ListScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink[200],
-        title: const Text(
-          'All Birthdays',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.listBirthdays,
+          style: const TextStyle(
             fontSize: 30,
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -49,9 +50,18 @@ class _ListScreenState extends State<ListScreen> {
               selectedColor: Colors.white,
               fillColor: Colors.pink[400],
               children: [
-                _buildPeriodButton('This Week', Period.Week),
-                _buildPeriodButton('This Month', Period.Month),
-                _buildPeriodButton('This Year', Period.Year),
+                _buildPeriodButton(
+                  AppLocalizations.of(context)!.this_week,
+                  Period.Week,
+                ),
+                _buildPeriodButton(
+                  AppLocalizations.of(context)!.this_month,
+                  Period.Month,
+                ),
+                _buildPeriodButton(
+                  AppLocalizations.of(context)!.this_year,
+                  Period.Year,
+                ),
               ],
             ),
           ),
@@ -95,9 +105,12 @@ class _ListScreenState extends State<ListScreen> {
                         break;
                     }
                     if (filteredBirthdays.isEmpty) {
-                      return const Center(
-                        child: Text('No birthdays for selected period',
-                            style: TextStyle(fontSize: 20.0)),
+                      return Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.no_birthdays,
+                          style: const TextStyle(fontSize: 20.0),
+                          textAlign: TextAlign.center,
+                        ),
                       );
                     }
                     return ListView.builder(
@@ -120,7 +133,7 @@ class _ListScreenState extends State<ListScreen> {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                'Gift Ideas: ${birthday.giftIdeas}',
+                                '${AppLocalizations.of(context)!.gift_ideas} ${birthday.giftIdeas}',
                                 style: const TextStyle(
                                   fontSize: 16.0,
                                 ),
@@ -134,11 +147,12 @@ class _ListScreenState extends State<ListScreen> {
                                 '${birthday.birthday.day}/${birthday.birthday.month}/${birthday.birthday.year}',
                                 style: const TextStyle(
                                   fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                'Age celebrated: $age',
+                                '${AppLocalizations.of(context)!.age_celebrated} $age',
                                 style: const TextStyle(
                                   fontSize: 16.0,
                                 ),
@@ -194,25 +208,25 @@ class _ListScreenState extends State<ListScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Birthday?'),
-          content: const Text('Are you sure you want to delete this birthday?'),
+          title: Text(AppLocalizations.of(context)!.delete_birthday),
+          content: Text(AppLocalizations.of(context)!.confirm_delete),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.black),
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: const TextStyle(color: Colors.black),
               ),
             ),
             TextButton(
               onPressed: () {
                 _deleteBirthday(birthday, box);
               },
-              child: const Text(
-                'Delete',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.delete,
+                style: const TextStyle(
                   color: Colors.red,
                 ),
               ),
