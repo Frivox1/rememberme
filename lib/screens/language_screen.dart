@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:rememberme/providers/langue_provider.dart';
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({Key? key}) : super(key: key);
@@ -107,8 +109,16 @@ class _LanguageScreenState extends State<LanguageScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Logique pour valider la sélection de la langue ici
-                  // Vous pouvez accéder à la variable `selectedLanguage` pour obtenir la langue sélectionnée
+                  final selectedLanguageCode = selectedLanguage == 'Français'
+                      ? 'fr'
+                      : selectedLanguage == 'English'
+                          ? 'en'
+                          : selectedLanguage == 'Nederlands'
+                              ? 'nl'
+                              : 'de';
+                  Provider.of<LanguageProvider>(context, listen: false)
+                      .setLocale(selectedLanguageCode);
+                  Navigator.pushNamed(context, '/home');
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,

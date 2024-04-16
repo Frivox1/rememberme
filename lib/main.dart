@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/models/app_settings.dart';
-import 'package:rememberme/providers/premium_provider.dart';
+import 'package:rememberme/providers/langue_provider.dart';
+import 'package:rememberme/providers/premium_provider.dart'; // Importez PremiumProvider
 import 'package:rememberme/screens/add_annif.dart';
 import 'package:rememberme/screens/home_screen.dart';
 import 'package:rememberme/screens/list_screen.dart';
@@ -70,9 +71,14 @@ void main() async {
   }
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => PremiumProvider(),
-      child: const MyApp(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => LanguageProvider()),
+        ChangeNotifierProvider(
+            create: (context) =>
+                PremiumProvider()), // Ajoutez le ChangeNotifierProvider pour PremiumProvider
+      ],
+      child: MyApp(),
     ),
   );
 }
@@ -166,7 +172,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       supportedLocales: L10n.all,
-      locale: const Locale('de'),
+      locale: Provider.of<LanguageProvider>(context).locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
