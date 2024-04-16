@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:rememberme/providers/langue_provider.dart';
 import 'package:rememberme/welcome/how_did_you_find_app_page.dart';
 
 class SelectLang extends StatefulWidget {
-  const SelectLang({Key? key}) : super(key: key);
+  SelectLang({Key? key}) : super(key: key);
 
   @override
   _SelectLangState createState() => _SelectLangState();
 }
 
 class _SelectLangState extends State<SelectLang> {
-  late String selectedLanguage = "";
-
-  final double fontSize = 24;
+  late String selectedLanguage = '';
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +36,10 @@ class _SelectLangState extends State<SelectLang> {
               title: Text(
                 '🇫🇷 Français',
                 style: TextStyle(
-                  fontSize: fontSize,
+                  fontSize: 24,
                 ),
               ),
-              value: 'Français',
+              value: 'fr',
               groupValue: selectedLanguage,
               onChanged: (value) {
                 setState(() {
@@ -53,10 +53,10 @@ class _SelectLangState extends State<SelectLang> {
               title: Text(
                 '🇬🇧 English',
                 style: TextStyle(
-                  fontSize: fontSize,
+                  fontSize: 24,
                 ),
               ),
-              value: 'English',
+              value: 'en',
               groupValue: selectedLanguage,
               onChanged: (value) {
                 setState(() {
@@ -70,10 +70,10 @@ class _SelectLangState extends State<SelectLang> {
               title: Text(
                 '🇳🇱 Nederlands',
                 style: TextStyle(
-                  fontSize: fontSize,
+                  fontSize: 24,
                 ),
               ),
-              value: 'Nederlands',
+              value: 'nl',
               groupValue: selectedLanguage,
               onChanged: (value) {
                 setState(() {
@@ -87,10 +87,10 @@ class _SelectLangState extends State<SelectLang> {
               title: Text(
                 '🇩🇪 Deutsch',
                 style: TextStyle(
-                  fontSize: fontSize,
+                  fontSize: 24,
                 ),
               ),
-              value: 'Deutsch',
+              value: 'de',
               groupValue: selectedLanguage,
               onChanged: (value) {
                 setState(() {
@@ -105,22 +105,24 @@ class _SelectLangState extends State<SelectLang> {
       bottomNavigationBar: BottomAppBar(
         child: ElevatedButton(
           onPressed: () {
-            // Logique pour passer à la prochaine page ici
             if (selectedLanguage.isNotEmpty) {
-              // Naviguer vers la prochaine page
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const HowDidYouFindAppPage();
-              }));
+              Provider.of<LanguageProvider>(context, listen: false)
+                  .setLocale(selectedLanguage);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HowDidYouFindAppPage(),
+                ),
+              );
             } else {
-              // Afficher un message d'erreur si aucune langue n'est sélectionnée
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                const SnackBar(
                   content: Text('Please select a language'),
                 ),
               );
             }
           },
-          child: Text('Next'),
+          child: const Text('Next'),
         ),
       ),
     );

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
+import 'package:provider/provider.dart';
+import 'package:rememberme/providers/langue_provider.dart';
 
 class MinimalCalendar extends StatelessWidget {
   const MinimalCalendar({Key? key}) : super(key: key);
@@ -8,8 +10,12 @@ class MinimalCalendar extends StatelessWidget {
   Widget build(BuildContext context) {
     final today = DateTime.now();
 
+    // hop récup dans le provider de la langue
+    final selectedLanguage =
+        Provider.of<LanguageProvider>(context).locale.languageCode;
+
     return CalendarCarousel(
-      locale: 'de',
+      locale: selectedLanguage,
       todayBorderColor:
           Colors.transparent, // Couleur de bordure pour le jour actuel
       todayButtonColor: Colors.transparent, // Couleur du bouton "Today"
