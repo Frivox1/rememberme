@@ -122,7 +122,13 @@ class _SelectLangState extends State<SelectLang> {
               );
             }
           },
-          child: const Text('Next'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.pink[300],
+          ),
+          child: const Text(
+            'Next',
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
         ),
       ),
     );

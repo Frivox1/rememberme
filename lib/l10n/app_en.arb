@@ -33,5 +33,12 @@
     "enableNotifications": "Enable notifications",
     "language": "Language",
     "shareTheApp": "Share the app",
-    "rateTheApp": "Rate the app"
+    "rateTheApp": "Rate the app",
+    "findTheApp": "Find the app?",
+    "fromAFriend": "From a friend",
+    "sawAnAd": "Saw an ad",
+    "internetSearch": "Internet search",
+    "other": "Other",
+    "pleaseSelectOption": "Please select an option",
+    "next": "Next"
 }

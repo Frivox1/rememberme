@@ -3,7 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/models/app_settings.dart';
 import 'package:rememberme/providers/langue_provider.dart';
-import 'package:rememberme/providers/premium_provider.dart'; // Importez PremiumProvider
+import 'package:rememberme/providers/premium_provider.dart';
 import 'package:rememberme/screens/add_annif.dart';
 import 'package:rememberme/screens/home_screen.dart';
 import 'package:rememberme/screens/list_screen.dart';

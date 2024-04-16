@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rememberme/welcome/welcome.dart';
 
 class HowDidYouFindAppPage extends StatefulWidget {
@@ -17,18 +18,19 @@ class _HowDidYouFindAppPageState extends State<HowDidYouFindAppPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.pink[200],
-          title: const Text(
-            'Find the app?',
-            style: TextStyle(
-              fontSize: 30,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          iconTheme: const IconThemeData(
+        backgroundColor: Colors.pink[200],
+        title: Text(
+          AppLocalizations.of(context)!.findTheApp,
+          style: const TextStyle(
+            fontSize: 30,
             color: Colors.white,
-          )),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: ListView(
@@ -36,7 +38,7 @@ class _HowDidYouFindAppPageState extends State<HowDidYouFindAppPage> {
             const SizedBox(height: 20.0),
             RadioListTile<String>(
               title: Text(
-                'From a friend',
+                AppLocalizations.of(context)!.fromAFriend,
                 style: TextStyle(
                   fontSize: fontSize,
                 ),
@@ -53,7 +55,7 @@ class _HowDidYouFindAppPageState extends State<HowDidYouFindAppPage> {
             const Divider(),
             RadioListTile<String>(
               title: Text(
-                'Saw an ad',
+                AppLocalizations.of(context)!.sawAnAd,
                 style: TextStyle(
                   fontSize: fontSize,
                 ),
@@ -70,7 +72,7 @@ class _HowDidYouFindAppPageState extends State<HowDidYouFindAppPage> {
             const Divider(),
             RadioListTile<String>(
               title: Text(
-                'Internet search',
+                AppLocalizations.of(context)!.internetSearch,
                 style: TextStyle(
                   fontSize: fontSize,
                 ),
@@ -87,7 +89,7 @@ class _HowDidYouFindAppPageState extends State<HowDidYouFindAppPage> {
             const Divider(),
             RadioListTile<String>(
               title: Text(
-                'Other',
+                AppLocalizations.of(context)!.other,
                 style: TextStyle(
                   fontSize: fontSize,
                 ),
@@ -117,12 +119,19 @@ class _HowDidYouFindAppPageState extends State<HowDidYouFindAppPage> {
               // Afficher un message d'erreur si aucune option n'est sélectionnée
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Please select an option'),
+                  content:
+                      Text(AppLocalizations.of(context)!.pleaseSelectOption),
                 ),
               );
             }
           },
-          child: Text('Next'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.pink[300],
+          ),
+          child: Text(
+            AppLocalizations.of(context)!.next,
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
         ),
       ),
     );

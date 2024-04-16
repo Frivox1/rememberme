@@ -33,5 +33,12 @@
     "enableNotifications": "Meldingen inschakelen",
     "language": "Taal",
     "shareTheApp": "Deel de app",
-    "rateTheApp": "Beoordeel de app"
+    "rateTheApp": "Beoordeel de app",
+    "findTheApp": "Vind de app?",
+    "fromAFriend": "Van een vriend",
+    "sawAnAd": "Heeft een advertentie gezien",
+    "internetSearch": "Internet zoeken",
+    "other": "Anders",
+    "pleaseSelectOption": "Selecteer een optie",
+    "next": "Volgende"
 }

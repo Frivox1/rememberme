@@ -33,5 +33,12 @@
   "enableNotifications": "Activer les notifications",
   "language": "Langue",
   "shareTheApp": "Partager l'application",
-  "rateTheApp": "Évaluer l'application"
+  "rateTheApp": "Évaluer l'application",
+  "findTheApp": "Trouver l'application?",
+  "fromAFriend": "D'un ami",
+  "sawAnAd": "Vu une annonce",
+  "internetSearch": "Recherche sur Internet",
+  "other": "Autre",
+  "pleaseSelectOption": "Veuillez sélectionner une option",
+  "next": "Suivant"
 }

@@ -37,7 +37,7 @@ class MinimalCalendar extends StatelessWidget {
           TextStyle(color: Colors.white), // Style du texte du jour sélectionné
       daysTextStyle: TextStyle(color: Colors.black), // Style du texte des jours
       weekendTextStyle:
-          TextStyle(color: Colors.red), // Style du texte pour les week-ends
+          TextStyle(color: Colors.pink), // Style du texte pour les week-ends
       weekdayTextStyle: TextStyle(
           color: Colors.pink), // Style du texte pour les jours de la semaine
       weekDayFormat: WeekdayFormat.short, // Format des jours de la semaine
