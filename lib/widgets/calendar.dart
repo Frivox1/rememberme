@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
-import 'package:provider/provider.dart';
-import 'package:rememberme/providers/langue_provider.dart';
+import 'package:hive/hive.dart';
+import 'package:rememberme/models/language_model.dart'; // Importez le modèle de langue
 
 class MinimalCalendar extends StatelessWidget {
   const MinimalCalendar({Key? key}) : super(key: key);
@@ -10,9 +10,11 @@ class MinimalCalendar extends StatelessWidget {
   Widget build(BuildContext context) {
     final today = DateTime.now();
 
-    // hop récup dans le provider de la langue
-    final selectedLanguage =
-        Provider.of<LanguageProvider>(context).locale.languageCode;
+    // Récupérez la langue stockée dans la boîte de données 'language'
+    final languageBox = Hive.box<LanguageModel>('language');
+    final languageModel =
+        languageBox.get('locale', defaultValue: LanguageModel(locale: 'en'));
+    final selectedLanguage = languageModel!.locale;
 
     return CalendarCarousel(
       locale: selectedLanguage,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:rememberme/providers/langue_provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:rememberme/models/language_model.dart';
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({Key? key}) : super(key: key);
@@ -44,7 +44,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                   fontSize: fontSize,
                 ),
               ),
-              value: 'Français',
+              value: 'fr',
               groupValue: selectedLanguage,
               onChanged: (value) {
                 setState(() {
@@ -53,7 +53,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
               },
               activeColor: Colors.pink,
             ),
-            const Divider(), // Ajouter un diviseur
+            const Divider(),
             RadioListTile<String>(
               title: Text(
                 '🇬🇧 English',
@@ -61,7 +61,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                   fontSize: fontSize,
                 ),
               ),
-              value: 'English',
+              value: 'en',
               groupValue: selectedLanguage,
               onChanged: (value) {
                 setState(() {
@@ -70,7 +70,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
               },
               activeColor: Colors.pink,
             ),
-            const Divider(), // Ajouter un diviseur
+            const Divider(),
             RadioListTile<String>(
               title: Text(
                 '🇳🇱 Nederlands',
@@ -78,7 +78,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                   fontSize: fontSize,
                 ),
               ),
-              value: 'Nederlands',
+              value: 'nl',
               groupValue: selectedLanguage,
               onChanged: (value) {
                 setState(() {
@@ -87,7 +87,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
               },
               activeColor: Colors.pink,
             ),
-            const Divider(), // Ajouter un diviseur
+            const Divider(),
             RadioListTile<String>(
               title: Text(
                 '🇩🇪 Deutsch',
@@ -95,7 +95,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                   fontSize: fontSize,
                 ),
               ),
-              value: 'Deutsch',
+              value: 'de',
               groupValue: selectedLanguage,
               onChanged: (value) {
                 setState(() {
@@ -108,16 +108,18 @@ class _LanguageScreenState extends State<LanguageScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  final selectedLanguageCode = selectedLanguage == 'Français'
-                      ? 'fr'
-                      : selectedLanguage == 'English'
-                          ? 'en'
-                          : selectedLanguage == 'Nederlands'
-                              ? 'nl'
-                              : 'de';
-                  Provider.of<LanguageProvider>(context, listen: false)
-                      .setLocale(selectedLanguageCode);
+                onPressed: () async {
+                  // Ouvrir la boîte de données 'language'
+                  final languageBox =
+                      await Hive.openBox<LanguageModel>('language');
+                  // Créer un objet LanguageModel avec la langue sélectionnée
+                  final languageModel = LanguageModel(locale: selectedLanguage);
+                  print(languageModel.locale);
+                  // Mettre à jour la langue sélectionnée dans la boîte de données
+                  await languageBox.put('locale', languageModel);
+
+                  setState(() {});
+
                   Navigator.pushNamed(context, '/home');
                 },
                 style: ElevatedButton.styleFrom(

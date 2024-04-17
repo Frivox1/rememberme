@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/models/app_settings.dart';
-import 'package:rememberme/providers/langue_provider.dart';
+import 'package:rememberme/models/language_model.dart';
 import 'package:rememberme/providers/premium_provider.dart';
 import 'package:rememberme/screens/add_annif.dart';
 import 'package:rememberme/screens/home_screen.dart';
 import 'package:rememberme/screens/list_screen.dart';
 import 'package:rememberme/screens/settings.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rememberme/welcome/select_lang.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
@@ -23,14 +23,14 @@ void main() async {
 
   // Initialise Hive
   await Hive.initFlutter();
-  Hive.registerAdapter(BirthdayAdapter());
-  Hive.registerAdapter(
-      AppSettingsAdapter()); // Enregistre l'adaptateur pour AppSettings
 
-  // Ouvre la boîte de données pour les anniversaires et les paramètres de l'application
+  Hive.registerAdapter(BirthdayAdapter());
+  Hive.registerAdapter(AppSettingsAdapter());
+  Hive.registerAdapter(LanguageModelAdapter());
+
   await Hive.openBox<Birthday>('birthdays');
-  await Hive.openBox<AppSettings>(
-      'app_settings'); // Ouvre la boîte de données pour les paramètres de l'application
+  await Hive.openBox<AppSettings>('app_settings');
+  await Hive.openBox<LanguageModel>('language');
 
   tzdata.initializeTimeZones();
 
@@ -71,14 +71,9 @@ void main() async {
   }
 
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => LanguageProvider()),
-        ChangeNotifierProvider(
-            create: (context) =>
-                PremiumProvider()), // Ajoutez le ChangeNotifierProvider pour PremiumProvider
-      ],
-      child: MyApp(),
+    ChangeNotifierProvider(
+      create: (context) => PremiumProvider(),
+      child: const MyApp(),
     ),
   );
 }
@@ -164,50 +159,73 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'RememberMe',
-      theme: ThemeData(
-        primarySwatch: Colors.pink,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      supportedLocales: L10n.all,
-      locale: Provider.of<LanguageProvider>(context).locale,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      home: FutureBuilder(
-        future: Hive.openBox<AppSettings>('app_settings'),
-        builder: (context, AsyncSnapshot<Box<AppSettings>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            final box = snapshot.data!;
-            final appSettings = box.get('settings',
-                defaultValue: AppSettings(isFirstTime: true));
-            if (appSettings!.isFirstTime) {
-              // Si c'est la première fois que l'application est ouverte
-              return SelectLang();
-            } else {
-              // Sinon, affiche la page d'accueil
-              return HomeScreen();
-            }
-          } else {
-            return Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
+    return FutureBuilder<Locale>(
+      future: getStoredLocale(),
+      builder: (context, AsyncSnapshot<Locale> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          final locale = snapshot.data ?? Locale('en');
+          return Directionality(
+            textDirection: TextDirection.ltr,
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'RememberMe',
+              theme: ThemeData(
+                primarySwatch: Colors.pink,
+                visualDensity: VisualDensity.adaptivePlatformDensity,
               ),
-            );
-          }
-        },
-      ),
-      routes: {
-        '/home': (context) => const HomeScreen(),
-        '/list': (context) => const ListScreen(),
-        '/add': (context) => const AddAnnifScreen(),
-        '/settings': (context) => const SettingsScreen(),
+              supportedLocales: L10n.all,
+              locale: locale,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              home: FutureBuilder(
+                future: Hive.openBox<AppSettings>('app_settings'),
+                builder: (context, AsyncSnapshot<Box<AppSettings>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    final box = snapshot.data!;
+                    final appSettings = box.get('settings',
+                        defaultValue: AppSettings(isFirstTime: true));
+                    if (appSettings!.isFirstTime) {
+                      return SelectLang();
+                    } else {
+                      return HomeScreen();
+                    }
+                  } else {
+                    return Scaffold(
+                      body: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+                },
+              ),
+              routes: {
+                '/home': (context) => const HomeScreen(),
+                '/list': (context) => const ListScreen(),
+                '/add': (context) => const AddAnnifScreen(),
+                '/settings': (context) => const SettingsScreen(),
+              },
+            ),
+          );
+        } else {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
       },
     );
+  }
+
+  // Fonction pour récupérer la locale stockée dans la boîte de données 'language'
+  Future<Locale> getStoredLocale() async {
+    final languageBox = Hive.box<LanguageModel>('language');
+    final languageModel =
+        languageBox.get('locale', defaultValue: LanguageModel(locale: 'en'));
+    return Locale(languageModel!.locale);
   }
 }
