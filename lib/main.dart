@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/models/app_settings.dart';
 import 'package:rememberme/models/language_model.dart';
+import 'package:rememberme/providers/langue_provider.dart';
 import 'package:rememberme/providers/premium_provider.dart';
 import 'package:rememberme/screens/add_annif.dart';
 import 'package:rememberme/screens/home_screen.dart';
@@ -71,8 +72,11 @@ void main() async {
   }
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => PremiumProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => PremiumProvider()),
+        ChangeNotifierProvider(create: (context) => LanguageProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -166,48 +170,60 @@ class MyApp extends StatelessWidget {
           final locale = snapshot.data ?? Locale('en');
           return Directionality(
             textDirection: TextDirection.ltr,
-            child: MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'RememberMe',
-              theme: ThemeData(
-                primarySwatch: Colors.pink,
-                visualDensity: VisualDensity.adaptivePlatformDensity,
-              ),
-              supportedLocales: L10n.all,
-              locale: locale,
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              home: FutureBuilder(
-                future: Hive.openBox<AppSettings>('app_settings'),
-                builder: (context, AsyncSnapshot<Box<AppSettings>> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    final box = snapshot.data!;
-                    final appSettings = box.get('settings',
-                        defaultValue: AppSettings(isFirstTime: true));
-                    if (appSettings!.isFirstTime) {
-                      return SelectLang();
-                    } else {
-                      return HomeScreen();
-                    }
-                  } else {
-                    return Scaffold(
-                      body: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
+            child: ChangeNotifierProvider<LanguageProvider>(
+              create: (_) => LanguageProvider()..setLocale(locale),
+              child: Consumer<LanguageProvider>(
+                builder: (context, languageProvider, _) {
+                  // Récupérer la langue à partir du Provider
+                  final providerLocale = languageProvider.locale;
+
+                  // Mettre à jour la locale avec la langue du Provider
+                  return MaterialApp(
+                    debugShowCheckedModeBanner: false,
+                    title: 'RememberMe',
+                    theme: ThemeData(
+                      primarySwatch: Colors.pink,
+                      visualDensity: VisualDensity.adaptivePlatformDensity,
+                    ),
+                    supportedLocales: L10n.all,
+                    locale: providerLocale,
+                    localizationsDelegates: const [
+                      AppLocalizations.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate,
+                    ],
+                    home: FutureBuilder(
+                      future: Hive.openBox<AppSettings>('app_settings'),
+                      builder:
+                          (context, AsyncSnapshot<Box<AppSettings>> snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          final box = snapshot.data!;
+                          final appSettings = box.get('settings',
+                              defaultValue: AppSettings(isFirstTime: true));
+                          if (appSettings!.isFirstTime) {
+                            return SelectLang();
+                          } else {
+                            return HomeScreen();
+                          }
+                        } else {
+                          return Scaffold(
+                            body: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    routes: {
+                      '/home': (context) => const HomeScreen(),
+                      '/list': (context) => const ListScreen(),
+                      '/add': (context) => const AddAnnifScreen(),
+                      '/settings': (context) => const SettingsScreen(),
+                    },
+                  );
                 },
               ),
-              routes: {
-                '/home': (context) => const HomeScreen(),
-                '/list': (context) => const ListScreen(),
-                '/add': (context) => const AddAnnifScreen(),
-                '/settings': (context) => const SettingsScreen(),
-              },
             ),
           );
         } else {

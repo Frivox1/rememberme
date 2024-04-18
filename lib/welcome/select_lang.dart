@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:rememberme/models/language_model.dart';
+import 'package:rememberme/providers/langue_provider.dart';
 import 'package:rememberme/welcome/how_did_you_find_app_page.dart';
 
 class SelectLang extends StatefulWidget {
@@ -110,6 +112,9 @@ class _SelectLangState extends State<SelectLang> {
               final languageBox = Hive.box<LanguageModel>('language');
               languageBox.put(
                   'locale', LanguageModel(locale: selectedLanguage));
+
+              Provider.of<LanguageProvider>(context, listen: false)
+                  .setLocale(Locale(selectedLanguage));
 
               // Passer à la page suivante
               Navigator.pushReplacement(

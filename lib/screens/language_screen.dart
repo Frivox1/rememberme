@@ -1,6 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:rememberme/models/language_model.dart';
+import 'package:rememberme/main.dart';
+import 'package:rememberme/providers/langue_provider.dart';
+import 'package:rememberme/providers/premium_provider.dart';
+import 'package:rememberme/screens/home_screen.dart';
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({Key? key}) : super(key: key);
@@ -109,18 +115,19 @@ class _LanguageScreenState extends State<LanguageScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
-                  // Ouvrir la boîte de données 'language'
-                  final languageBox =
-                      await Hive.openBox<LanguageModel>('language');
-                  // Créer un objet LanguageModel avec la langue sélectionnée
+                  // Update language in Hive
+                  final languageBox = Hive.box<LanguageModel>('language');
                   final languageModel = LanguageModel(locale: selectedLanguage);
-                  print(languageModel.locale);
-                  // Mettre à jour la langue sélectionnée dans la boîte de données
                   await languageBox.put('locale', languageModel);
 
-                  setState(() {});
+                  // Notify the provider with the selected language
+                  Provider.of<LanguageProvider>(context, listen: false)
+                      .setLocale(Locale(selectedLanguage));
 
-                  Navigator.pushNamed(context, '/home');
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HomeScreen()));
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -143,5 +150,20 @@ class _LanguageScreenState extends State<LanguageScreen> {
         ),
       ),
     );
+  }
+
+  // Method to restart the app
+  void restartApp() {
+    // Delay restart to ensure UI updates are completed
+    Timer(Duration(milliseconds: 500), () {
+      // Perform a hot restart of the app
+      // Note: This will restart the entire app, equivalent to stopping and starting it again
+      runApp(
+        ChangeNotifierProvider(
+          create: (context) => PremiumProvider(),
+          child: const MyApp(),
+        ),
+      );
+    });
   }
 }
