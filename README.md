@@ -4,14 +4,15 @@ Welcome to RememberMe, your personal assistant for never missing birthdays!
 
 ## Introduction 👋
 
-RememberMe is a work-in-progress application designed to help you keep track of birthdays and <u>never</u>  miss an important date. While still under development, the app already allows you to create birthday reminders, view upcoming birthdays, filter them by week, month, or year and send notifications on the day of the birthday.
+RememberMe is a work-in-progress application designed to help you keep track of birthdays and <u>never</u>  miss an important date. While still under development, the app already allows you to create birthday reminders, view upcoming birthdays, filter them by week, month, or year and send notifications on the day of the birthday. The app support multiple languages like English, French, Dutch and German.
 
 ## Features 📝
 
 - **Birthday Reminders**: Create reminders for birthdays of your friends and family.
 - **Filtering Options**: Easily filter birthdays by week, month, or year.
 - **Notification System**: Receive notifications on the day of the birthday.
-- **Upcoming Features**: Stay tuned for upcoming features like in-app purchases and multi-language support.
+- **Multi-language Support**: Support for multiple languages (en, fr, nl and de) to cater to a global audience.
+- **Upcoming Features**: Stay tuned for upcoming features like in-app purchases.
 
 ## Cloning the Project 🔍
 
@@ -58,6 +59,17 @@ flutter run
 ### Libraries:
 - **WorkManager**: Library for managing background tasks in Flutter applications.
 - **Flutter Local Notifications**: Library for displaying local notifications in Flutter applications.
+- **Flutter Localizations**: Library for adding support for multiple languages in Flutter applications.
+
+## TODO 📝
+
+- [ ] Add support for in-app purchases.
+
+## Future Features 🚀
+
+- [ ] Develop a feature enabling users to share their birthday lists with friends and family.
+- [ ] Introduce functionality allowing users to customize the time of day for receiving notifications.
+- [ ] Consider expanding language options based on user demand.
 
 ## Contact 📲
 
