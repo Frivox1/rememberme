@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rememberme/main.dart';
 import 'package:rememberme/providers/premium_provider.dart';
 import 'package:rememberme/screens/language_screen.dart';
 import 'package:share/share.dart';
@@ -27,6 +28,9 @@ class SettingsScreen extends StatelessWidget {
       ),
       body: Consumer<PremiumProvider>(
         builder: (context, premiumProvider, _) {
+          bool notificationsEnabled = premiumProvider.isPremium;
+          TimeOfDay selectedTime = TimeOfDay
+              .now(); // Ajout de la variable pour stocker l'heure sélectionnée
           return ListView(
             padding: const EdgeInsets.all(16.0),
             children: <Widget>[
@@ -61,7 +65,7 @@ class SettingsScreen extends StatelessWidget {
                 leading: const Icon(Icons.notifications),
                 title: Text(AppLocalizations.of(context)!.notifications),
                 trailing: Switch(
-                  value: premiumProvider.isPremium,
+                  value: notificationsEnabled,
                   onChanged: (value) {
                     if (!premiumProvider.isPremium) {
                       showDialog(
@@ -99,6 +103,38 @@ class SettingsScreen extends StatelessWidget {
                   },
                   activeColor: Colors.pink,
                 ),
+              ),
+              const Divider(),
+              ListTile(
+                leading: Icon(
+                  Icons.alarm,
+                  color: notificationsEnabled ? Colors.black : Colors.grey,
+                ),
+                title: Text(
+                  AppLocalizations.of(context)!.changeHour,
+                  style: TextStyle(
+                    color: notificationsEnabled ? Colors.black : Colors.grey,
+                  ),
+                ),
+                onTap: notificationsEnabled
+                    ? () async {
+                        final selectedTimeOfDay = await showTimePicker(
+                          context: context,
+                          initialTime: selectedTime,
+                        );
+                        if (selectedTimeOfDay != null) {
+                          // Calcule le délai en minutes à partir de l'heure sélectionnée
+                          int selectedDelayInMinutes =
+                              selectedTimeOfDay.hour * 60 +
+                                  selectedTimeOfDay.minute;
+                          // Met à jour la variable globale periodicTaskDelayInMinutes
+                          periodicTaskDelayInMinutes = selectedDelayInMinutes;
+                          // Affiche une confirmation ou effectue d'autres actions si nécessaire
+                          print(periodicTaskDelayInMinutes);
+                        }
+                      }
+                    : null,
+                // Si les notifications ne sont pas activées, onTap est nul
               ),
               const Divider(),
               ListTile(

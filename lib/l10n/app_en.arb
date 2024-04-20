@@ -32,6 +32,7 @@
     "messageToPremium": "Upgrade to premium to activate notifications and get access to all features",
     "enableNotifications": "Enable notifications",
     "language": "Language",
+    "changeHour": "Change notification time",
     "shareTheApp": "Share the app",
     "rateTheApp": "Rate the app",
     "findTheApp": "Find the app?",

@@ -19,6 +19,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:rememberme/l10n/l10n.dart';
 
+// Déclaration globale de periodicTaskDelayInMinutes
+int periodicTaskDelayInMinutes = 0;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -59,13 +62,16 @@ void main() async {
   WidgetsBinding.instance.addObserver(MyAppLifecycleObserver());
 
   // Initialise WorkManager pour les tâches périodiques
+  periodicTaskDelayInMinutes =
+      24 * 60 - DateTime.now().hour * 60 - DateTime.now().minute + 7 * 60 + 30;
+
   try {
     Workmanager().initialize(callbackDispatcher);
     Workmanager().registerPeriodicTask(
       'birthdayNotificationTask',
       'birthdayNotificationTask',
       frequency: const Duration(days: 1),
-      initialDelay: Duration(hours: 24 - DateTime.now().hour + 7, minutes: 30),
+      initialDelay: Duration(minutes: periodicTaskDelayInMinutes),
     );
   } catch (e) {
     print('WorkManager not supported on this platform: $e');
