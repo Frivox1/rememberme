@@ -57,6 +57,9 @@ class SettingsScreen extends StatelessWidget {
                   ],
                 ),
                 onTap: () {
+                  // Mise à jour de l'état premium dans la boîte de données
+                  final premiumProvider =
+                      Provider.of<PremiumProvider>(context, listen: false);
                   premiumProvider.setPremium(!premiumProvider.isPremium);
                 },
               ),

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/models/app_settings.dart';
 import 'package:rememberme/models/language_model.dart';
+import 'package:rememberme/models/premium_model.dart';
 import 'package:rememberme/providers/langue_provider.dart';
 import 'package:rememberme/providers/premium_provider.dart';
 import 'package:rememberme/screens/add_annif.dart';
@@ -31,10 +32,12 @@ void main() async {
   Hive.registerAdapter(BirthdayAdapter());
   Hive.registerAdapter(AppSettingsAdapter());
   Hive.registerAdapter(LanguageModelAdapter());
+  Hive.registerAdapter(PremiumAdapter());
 
   await Hive.openBox<Birthday>('birthdays');
   await Hive.openBox<AppSettings>('app_settings');
   await Hive.openBox<LanguageModel>('language');
+  await Hive.openBox<Premium>('premium');
 
   tzdata.initializeTimeZones();
 
@@ -173,59 +176,65 @@ class MyApp extends StatelessWidget {
       future: getStoredLocale(),
       builder: (context, AsyncSnapshot<Locale> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          final locale = snapshot.data ?? Locale('en');
+          final locale = snapshot.data ?? const Locale('en');
           return Directionality(
             textDirection: TextDirection.ltr,
             child: ChangeNotifierProvider<LanguageProvider>(
               create: (_) => LanguageProvider()..setLocale(locale),
-              child: Consumer<LanguageProvider>(
-                builder: (context, languageProvider, _) {
-                  // Récupérer la langue à partir du Provider
-                  final providerLocale = languageProvider.locale;
+              child: ChangeNotifierProvider<PremiumProvider>(
+                create: (_) => PremiumProvider(),
+                builder: (context, _) {
+                  return Consumer<LanguageProvider>(
+                    builder: (context, languageProvider, _) {
+                      // Récupérer la langue à partir du Provider
+                      final providerLocale = languageProvider.locale;
 
-                  // Mettre à jour la locale avec la langue du Provider
-                  return MaterialApp(
-                    debugShowCheckedModeBanner: false,
-                    title: 'RememberMe',
-                    theme: ThemeData(
-                      primarySwatch: Colors.pink,
-                      visualDensity: VisualDensity.adaptivePlatformDensity,
-                    ),
-                    supportedLocales: L10n.all,
-                    locale: providerLocale,
-                    localizationsDelegates: const [
-                      AppLocalizations.delegate,
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                      GlobalCupertinoLocalizations.delegate,
-                    ],
-                    home: FutureBuilder(
-                      future: Hive.openBox<AppSettings>('app_settings'),
-                      builder:
-                          (context, AsyncSnapshot<Box<AppSettings>> snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          final box = snapshot.data!;
-                          final appSettings = box.get('settings',
-                              defaultValue: AppSettings(isFirstTime: true));
-                          if (appSettings!.isFirstTime) {
-                            return SelectLang();
-                          } else {
-                            return HomeScreen();
-                          }
-                        } else {
-                          return Scaffold(
-                            body: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        }
-                      },
-                    ),
-                    routes: {
-                      '/home': (context) => const HomeScreen(),
-                      '/list': (context) => const ListScreen(),
-                      '/add': (context) => const AddAnnifScreen(),
-                      '/settings': (context) => const SettingsScreen(),
+                      // Mettre à jour la locale avec la langue du Provider
+                      return MaterialApp(
+                        debugShowCheckedModeBanner: false,
+                        title: 'RememberMe',
+                        theme: ThemeData(
+                          primarySwatch: Colors.pink,
+                          visualDensity: VisualDensity.adaptivePlatformDensity,
+                        ),
+                        supportedLocales: L10n.all,
+                        locale: providerLocale,
+                        localizationsDelegates: const [
+                          AppLocalizations.delegate,
+                          GlobalMaterialLocalizations.delegate,
+                          GlobalWidgetsLocalizations.delegate,
+                          GlobalCupertinoLocalizations.delegate,
+                        ],
+                        home: FutureBuilder(
+                          future: Hive.openBox<AppSettings>('app_settings'),
+                          builder: (context,
+                              AsyncSnapshot<Box<AppSettings>> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              final box = snapshot.data!;
+                              final appSettings = box.get('settings',
+                                  defaultValue: AppSettings(isFirstTime: true));
+                              if (appSettings!.isFirstTime) {
+                                return SelectLang();
+                              } else {
+                                return HomeScreen();
+                              }
+                            } else {
+                              return Scaffold(
+                                body: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                        routes: {
+                          '/home': (context) => const HomeScreen(),
+                          '/list': (context) => const ListScreen(),
+                          '/add': (context) => const AddAnnifScreen(),
+                          '/settings': (context) => const SettingsScreen(),
+                        },
+                      );
                     },
                   );
                 },
