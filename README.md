@@ -12,7 +12,7 @@ RememberMe is a work-in-progress application designed to help you keep track of 
 - **Filtering Options**: Easily filter birthdays by week, month, or year.
 - **Notification System**: Receive notifications on the day of the birthday.
 - **Multi-language Support**: Support for multiple languages (en, fr, nl and de) to cater to a global audience.
-- **Upcoming Features**: Stay tuned for upcoming features like in-app purchases.
+- **Upcoming Features**: Stay tuned for upcoming features like in-app purchases, sharing birthday lists, choosing notification times and maybe even more languages!
 
 ## Cloning the Project 🔍
 
