@@ -140,10 +140,11 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
               controller: _nameController,
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.name,
-                labelStyle: const TextStyle(color: Colors.pink),
+                labelStyle: const TextStyle(color: Colors.black),
                 focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink),
                 ),
+                prefixIcon: Icon(Icons.person), // Ajoutez l'icône ici
               ),
             ),
             const SizedBox(height: 35),
@@ -155,10 +156,11 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
               readOnly: true,
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.birthday,
-                labelStyle: const TextStyle(color: Colors.pink),
+                labelStyle: const TextStyle(color: Colors.black),
                 focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink),
                 ),
+                prefixIcon: Icon(Icons.calendar_today), // Ajoutez l'icône ici
               ),
             ),
             const SizedBox(height: 35),
@@ -166,10 +168,11 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
               controller: _giftIdeasController,
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.giftIdeas,
-                labelStyle: const TextStyle(color: Colors.pink),
+                labelStyle: const TextStyle(color: Colors.black),
                 focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink),
                 ),
+                prefixIcon: Icon(Icons.card_giftcard), // Ajoutez l'icône ici
               ),
               maxLines: null,
             ),
@@ -180,7 +183,7 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
                 onPressed: () => _saveBirthday(context),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.pink,
+                  backgroundColor: Colors.pink[200],
                   textStyle: const TextStyle(
                     fontSize: 24,
                   ),

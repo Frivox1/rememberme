@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:hive/hive.dart';
-import 'package:rememberme/models/language_model.dart'; // Importez le modèle de langue
+import 'package:rememberme/models/language_model.dart';
 
 class MinimalCalendar extends StatelessWidget {
   const MinimalCalendar({Key? key}) : super(key: key);
@@ -39,7 +40,11 @@ class MinimalCalendar extends StatelessWidget {
           TextStyle(color: Colors.white), // Style du texte du jour sélectionné
       daysTextStyle: TextStyle(color: Colors.black), // Style du texte des jours
       weekendTextStyle:
-          TextStyle(color: Colors.pink), // Style du texte pour les week-ends
+          TextStyle(color: Colors.black), // Style du texte pour les week-ends
+      markedDatesMap: EventList<EventInterface>(
+          events: {DateTime(2024, 4, 12): []}), // Dates marquées
+      markedDateCustomTextStyle:
+          TextStyle(color: Colors.pink), // Style du texte des dates marquées
       weekdayTextStyle: TextStyle(
           color: Colors.pink), // Style du texte pour les jours de la semaine
       weekDayFormat: WeekdayFormat.short, // Format des jours de la semaine
