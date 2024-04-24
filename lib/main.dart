@@ -94,8 +94,7 @@ void main() async {
 class MyAppLifecycleObserver extends WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.detached) {
+    if (state == AppLifecycleState.detached) {
       closeHiveBoxes();
     }
   }
