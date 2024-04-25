@@ -1,6 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:rememberme/main.dart';
+import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/providers/premium_provider.dart';
 import 'package:rememberme/screens/language_screen.dart';
 import 'package:share/share.dart';
@@ -11,6 +15,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TimeOfDay selectedTime = TimeOfDay.now(); // Définition de selectedTime
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.pink[200],
@@ -29,8 +34,6 @@ class SettingsScreen extends StatelessWidget {
       body: Consumer<PremiumProvider>(
         builder: (context, premiumProvider, _) {
           bool notificationsEnabled = premiumProvider.isPremium;
-          TimeOfDay selectedTime = TimeOfDay
-              .now(); // Ajout de la variable pour stocker l'heure sélectionnée
           return ListView(
             padding: const EdgeInsets.all(16.0),
             children: <Widget>[
@@ -154,6 +157,14 @@ class SettingsScreen extends StatelessWidget {
               ),
               const Divider(),
               ListTile(
+                leading: const Icon(Icons.ios_share),
+                title: const Text("Export anniversary data"),
+                onTap: () async {
+                  await _showBirthdaySelectionBottomSheet(context);
+                },
+              ),
+              const Divider(),
+              ListTile(
                 leading: const Icon(Icons.share),
                 title: Text(AppLocalizations.of(context)!.shareTheApp),
                 onTap: () {
@@ -171,5 +182,92 @@ class SettingsScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _showBirthdaySelectionBottomSheet(BuildContext context) async {
+    final box = await Hive.openBox<Birthday>('birthdays');
+    final List<Birthday> allBirthdays = box.values.toList();
+
+    List<Birthday> selectedBirthdays = [];
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              padding: EdgeInsets.all(16.0),
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: allBirthdays.map((birthday) {
+                          final formattedDate =
+                              "${birthday.birthday.day}/${birthday.birthday.month}/${birthday.birthday.year}";
+                          return CheckboxListTile(
+                            title: Text(
+                              '${birthday.name} - $formattedDate - ${birthday.giftIdeas}',
+                            ),
+                            value: selectedBirthdays.contains(birthday),
+                            onChanged: (bool? value) {
+                              setState(() {
+                                if (value != null && value) {
+                                  selectedBirthdays.add(birthday);
+                                } else {
+                                  selectedBirthdays.remove(birthday);
+                                }
+                              });
+                            },
+                            activeColor:
+                                Colors.pink, // Couleur de la case cochée
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _exportSelectedBirthdays(selectedBirthdays);
+                    },
+                    child: Text(
+                      'Valider',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.pink, // Couleur du bouton
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _exportSelectedBirthdays(
+      List<Birthday> selectedBirthdays) async {
+    final List<String> birthdayLines = selectedBirthdays.map((birthday) {
+      final formattedDate =
+          "${birthday.birthday.day}/${birthday.birthday.month}/${birthday.birthday.year}";
+      return "${birthday.name} - $formattedDate - ${birthday.giftIdeas}";
+    }).toList();
+
+    final String content = birthdayLines.join('\n');
+
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/selected_birthdays.txt');
+    await file.writeAsString(content);
+
+    Share.shareFiles(['${directory.path}/selected_birthdays.txt']);
   }
 }
