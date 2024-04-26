@@ -41,5 +41,10 @@
   "internetSearch": "Recherche sur Internet",
   "other": "Autre",
   "pleaseSelectOption": "Veuillez sélectionner une option",
-  "next": "Suivant"
+  "next": "Suivant",
+  "export": "Exporter des anniversaires",
+  "import": "Importer des anniversaires",
+  "noAnniversaries": "Aucun anniversaire à exporter",
+  "importSuccess": "Anniversaires importés avec succès",
+  "validate": "Valider"
 }

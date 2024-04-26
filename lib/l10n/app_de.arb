@@ -41,5 +41,10 @@
     "internetSearch": "Internet Suche",
     "other": "Andere",
     "pleaseSelectOption": "Bitte wählen Sie eine Option",
-    "next": "Weiter"
+    "next": "Weiter",
+    "export": "Exportieren",
+    "import": "Importieren",
+    "noAnniversaries": "Keine Jahrestage",
+    "importSuccess": "Import erfolgreich",
+    "validate": "Überprüfen"
 }

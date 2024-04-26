@@ -41,5 +41,10 @@
     "internetSearch": "Internet zoeken",
     "other": "Anders",
     "pleaseSelectOption": "Selecteer een optie",
-    "next": "Volgende"
+    "next": "Volgende",
+    "export": "Exporteer verjaardagslijst",
+    "import": "Importeer verjaardagslijst",
+    "noAnniversaries": "Geen verjaardagen om te exporteren",
+    "importSuccess": "Verjaardagen succesvol geïmporteerd",
+    "validate": "Valideren"
 }

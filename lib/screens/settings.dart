@@ -159,7 +159,7 @@ class SettingsScreen extends StatelessWidget {
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.arrow_circle_up),
-                title: const Text("Export anniversary data"),
+                title: Text(AppLocalizations.of(context)!.export),
                 onTap: () async {
                   await _showBirthdaySelectionBottomSheet(context);
                 },
@@ -167,7 +167,7 @@ class SettingsScreen extends StatelessWidget {
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.arrow_circle_down),
-                title: const Text("Import anniversary data"),
+                title: Text(AppLocalizations.of(context)!.import),
                 onTap: () async {
                   await _importBirthdayData(context);
                 },
@@ -205,7 +205,7 @@ class SettingsScreen extends StatelessWidget {
             height: 200,
             child: Center(
               child: Text(
-                "Il n'y a pas encore d'anniversaire",
+                AppLocalizations.of(context)!.noAnniversaries,
                 style: TextStyle(fontSize: 20),
               ),
             ),
@@ -264,8 +264,8 @@ class SettingsScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.pink, // Couleur du bouton
                     ),
-                    child: const Text(
-                      'Valider',
+                    child: Text(
+                      AppLocalizations.of(context)!.validate,
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -337,7 +337,7 @@ class SettingsScreen extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              "Import successful!",
+              AppLocalizations.of(context)!.importSuccess,
               style: const TextStyle(color: Colors.white, fontSize: 20),
             ),
             backgroundColor: Colors.pink[200],
