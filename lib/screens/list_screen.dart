@@ -1,11 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hive/hive.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/widgets/navbar.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share/share.dart';
 
 class ListScreen extends StatefulWidget {
   const ListScreen({Key? key}) : super(key: key);
@@ -16,7 +13,6 @@ class ListScreen extends StatefulWidget {
 
 class _ListScreenState extends State<ListScreen> {
   Period _selectedPeriod = Period.Year;
-  List<Birthday> _selectedBirthdays = [];
 
   @override
   Widget build(BuildContext context) {
@@ -119,108 +115,6 @@ class _ListScreenState extends State<ListScreen> {
                     }
                     return Column(
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            showModalBottomSheet<void>(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return StatefulBuilder(
-                                  builder: (BuildContext context,
-                                      StateSetter setState) {
-                                    return Container(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: filteredBirthdays.length,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              final Birthday birthday =
-                                                  filteredBirthdays[index];
-                                              final age = _calculateAge(
-                                                  birthday.birthday);
-                                              return ListTile(
-                                                title: Row(
-                                                  children: [
-                                                    Checkbox(
-                                                      value: _selectedBirthdays
-                                                          .contains(birthday),
-                                                      onChanged: (bool? value) {
-                                                        setState(() {
-                                                          if (value != null &&
-                                                              value) {
-                                                            _selectedBirthdays
-                                                                .add(birthday);
-                                                          } else {
-                                                            _selectedBirthdays
-                                                                .remove(
-                                                                    birthday);
-                                                          }
-                                                        });
-                                                      },
-                                                    ),
-                                                    Expanded(
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            birthday.name,
-                                                            style: const TextStyle(
-                                                                fontSize: 18.0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold),
-                                                          ),
-                                                          const SizedBox(
-                                                              height: 5),
-                                                          Text(
-                                                            '${AppLocalizations.of(context)!.gift_ideas} ${birthday.giftIdeas}',
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 16.0,
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            '${birthday.birthday.day}/${birthday.birthday.month}/${birthday.birthday.year}',
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 16.0,
-                                                            ),
-                                                          ),
-                                                          Text(
-                                                            '${AppLocalizations.of(context)!.age_celebrated} $age',
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 16.0,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              _shareSelectedBirthdays();
-                                            },
-                                            child: const Text("Valider"),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            );
-                          },
-                          child: Text("Sélectionner"),
-                        ),
                         Expanded(
                           child: ListView.builder(
                             itemCount: filteredBirthdays.length,
@@ -348,22 +242,6 @@ class _ListScreenState extends State<ListScreen> {
         );
       },
     );
-  }
-
-  Future<void> _shareSelectedBirthdays() async {
-    final List<String> birthdayLines = _selectedBirthdays.map((birthday) {
-      final formattedDate =
-          "${birthday.birthday.day}/${birthday.birthday.month}/${birthday.birthday.year}";
-      return "${birthday.name} - $formattedDate - ${birthday.giftIdeas}";
-    }).toList();
-
-    final String content = birthdayLines.join('\n');
-
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/selected_birthdays.txt');
-    await file.writeAsString(content);
-
-    Share.shareFiles(['${directory.path}/selected_birthdays.txt']);
   }
 }
 
