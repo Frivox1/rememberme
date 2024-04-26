@@ -4,7 +4,7 @@ Welcome to RememberMe, your personal assistant for never missing birthdays!
 
 ## Introduction 👋
 
-RememberMe is a work-in-progress application designed to help you keep track of birthdays and <u>never</u>  miss an important date. While still under development, the app already allows you to create birthday reminders, view upcoming birthdays, filter them by week, month, or year and send notifications on the day of the birthday. The app support multiple languages like English, French, Dutch and German.
+RememberMe is a work-in-progress application designed to help you keep track of birthdays and <u>never</u> miss an important date. While still under development, the app already allows you to create birthday reminders, view upcoming birthdays, filter them by week, month, or year, and send notifications on the day of the birthday. Additionally, the app supports multiple languages such as English, French, Dutch, and German. Furthermore, you can now export and import birthday lists for more flexible data management.
 
 ## Features 📝
 
@@ -12,7 +12,8 @@ RememberMe is a work-in-progress application designed to help you keep track of 
 - **Filtering Options**: Easily filter birthdays by week, month, or year.
 - **Notification System**: Receive notifications when you want on the day of the birthday.
 - **Multi-language Support**: Support for multiple languages (en, fr, nl and de) to cater to a global audience.
-- **Upcoming Features**: Stay tuned for upcoming features like in-app purchases, sharing birthday lists and maybe even more languages!
+- **Sharing birthday lists**: Import and export your birthday lists with friends and family.
+- **Upcoming Features**: Stay tuned for upcoming features like in-app purchases and maybe even more languages!
 
 ## Cloning the Project 🔍
 
