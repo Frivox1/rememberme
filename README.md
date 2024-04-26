@@ -62,13 +62,9 @@ flutter run
 - **Flutter Local Notifications**: Library for displaying local notifications in Flutter applications.
 - **Flutter Localizations**: Library for adding support for multiple languages in Flutter applications.
 
-## TODO 📝
-
-- [ ] Add support for in-app purchases.
-
 ## Future Features 🚀
 
-- [ ] Develop a feature enabling users to share their birthday lists with friends and family.
+- [ ] Add support for in-app purchases.
 - [ ] Consider expanding language options based on user demand.
 
 ## Contact 📲
