@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
@@ -157,7 +158,7 @@ class SettingsScreen extends StatelessWidget {
               ),
               const Divider(),
               ListTile(
-                leading: const Icon(Icons.ios_share),
+                leading: const Icon(Icons.arrow_circle_up),
                 title: const Text("Export anniversary data"),
                 onTap: () async {
                   await _showBirthdaySelectionBottomSheet(context);
@@ -165,7 +166,15 @@ class SettingsScreen extends StatelessWidget {
               ),
               const Divider(),
               ListTile(
-                leading: const Icon(Icons.share),
+                leading: const Icon(Icons.arrow_circle_down),
+                title: const Text("Import anniversary data"),
+                onTap: () async {
+                  await _importBirthdayData(context);
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.ios_share),
                 title: Text(AppLocalizations.of(context)!.shareTheApp),
                 onTap: () {
                   Share.share('Check out this awesome app!');
@@ -187,6 +196,24 @@ class SettingsScreen extends StatelessWidget {
   Future<void> _showBirthdaySelectionBottomSheet(BuildContext context) async {
     final box = await Hive.openBox<Birthday>('birthdays');
     final List<Birthday> allBirthdays = box.values.toList();
+
+    if (allBirthdays.isEmpty) {
+      await showModalBottomSheet<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 200,
+            child: Center(
+              child: Text(
+                "Il n'y a pas encore d'anniversaire",
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+          );
+        },
+      );
+      return;
+    }
 
     List<Birthday> selectedBirthdays = [];
 
@@ -234,15 +261,15 @@ class SettingsScreen extends StatelessWidget {
                       Navigator.of(context).pop();
                       _exportSelectedBirthdays(selectedBirthdays);
                     },
-                    child: Text(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.pink, // Couleur du bouton
+                    ),
+                    child: const Text(
                       'Valider',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pink, // Couleur du bouton
                     ),
                   ),
                 ],
@@ -269,5 +296,54 @@ class SettingsScreen extends StatelessWidget {
     await file.writeAsString(content);
 
     Share.shareFiles(['${directory.path}/selected_birthdays.txt']);
+  }
+
+  Future<void> _importBirthdayData(BuildContext context) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      // Récupérer le chemin du fichier sélectionné
+      String? path = result.files.single.path;
+
+      if (path != null) {
+        // Lire le contenu du fichier
+        File file = File(path);
+        String content = await file.readAsString();
+
+        // Traitez le contenu du fichier comme souhaité
+        List<String> lines = content.split('\n');
+        List<Birthday> birthdays = lines.map((line) {
+          final parts = line.split(' - ');
+          final name = parts[0];
+          final dateParts = parts[1].split('/');
+          final birthday = DateTime(
+            int.parse(dateParts[2]),
+            int.parse(dateParts[1]),
+            int.parse(dateParts[0]),
+          );
+          final giftIdeas = parts[2];
+          return Birthday(
+            name: name,
+            birthday: birthday,
+            giftIdeas: giftIdeas,
+          );
+        }).toList();
+
+        // Ajouter les anniversaires à la boîte Hive
+        final box = await Hive.openBox<Birthday>('birthdays');
+        await box.addAll(birthdays);
+
+        // Afficher une notification de réussite
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Import successful!",
+              style: const TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            backgroundColor: Colors.pink[200],
+          ),
+        );
+      }
+    }
   }
 }

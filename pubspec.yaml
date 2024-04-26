@@ -49,6 +49,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_calendar_carousel: ^2.4.2
+  file_picker: ^8.0.2
 
 dev_dependencies:
   flutter_test:
