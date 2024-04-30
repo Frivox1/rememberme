@@ -6,6 +6,10 @@ Welcome to RememberMe, your personal assistant for never missing birthdays!
 
 RememberMe is a work-in-progress application designed to help you keep track of birthdays and <u>never</u> miss an important date. While still under development, the app already allows you to create birthday reminders, view upcoming birthdays, filter them by week, month, or year, and send notifications on the day of the birthday. Additionally, the app supports multiple languages such as English, French, Dutch, and German. Furthermore, you can now export and import birthday lists for more flexible data management.
 
+## Logo 🎂
+
+<img src="https://github.com/Frivox1/rememberme/assets/73830772/67918105-7c1f-4551-8625-2fd2ef5a838a" alt="Logo" width="200">
+
 ## Features 📝
 
 - **Birthday Reminders**: Create reminders for birthdays of your friends and family.
@@ -15,9 +19,21 @@ RememberMe is a work-in-progress application designed to help you keep track of 
 - **Sharing birthday lists**: Import and export your birthday lists with friends and family.
 - **Upcoming Features**: Stay tuned for upcoming features like in-app purchases and maybe even more languages!
 
-## Logo 🎂
+## Tech Stack 🧑‍💻
 
-<img src="https://github.com/Frivox1/rememberme/assets/73830772/67918105-7c1f-4551-8625-2fd2ef5a838a" alt="Logo" width="200">
+- **Flutter**: Google's UI toolkit for building cross-platform applications.
+- **Dart**: Client-optimized programming language for multi-platform apps.
+- **Hive**: Lightweight and fast NoSQL database for Flutter applications.
+
+### Libraries:
+- **WorkManager**: Library for managing background tasks in Flutter applications.
+- **Flutter Local Notifications**: Library for displaying local notifications in Flutter applications.
+- **Flutter Localizations**: Library for adding support for multiple languages in Flutter applications.
+
+## Future Features 🚀
+
+- [ ] Add support for in-app purchases.
+- [ ] Consider expanding language options based on user demand.
 
 ## Cloning the Project 🔍
 
@@ -54,22 +70,6 @@ flutter pub get
 ```bash
 flutter run
 ```
-
-## Tech Stack 🧑‍💻
-
-- **Flutter**: Google's UI toolkit for building cross-platform applications.
-- **Dart**: Client-optimized programming language for multi-platform apps.
-- **Hive**: Lightweight and fast NoSQL database for Flutter applications.
-
-### Libraries:
-- **WorkManager**: Library for managing background tasks in Flutter applications.
-- **Flutter Local Notifications**: Library for displaying local notifications in Flutter applications.
-- **Flutter Localizations**: Library for adding support for multiple languages in Flutter applications.
-
-## Future Features 🚀
-
-- [ ] Add support for in-app purchases.
-- [ ] Consider expanding language options based on user demand.
 
 ## Contact 📲
 
