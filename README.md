@@ -15,6 +15,10 @@ RememberMe is a work-in-progress application designed to help you keep track of 
 - **Sharing birthday lists**: Import and export your birthday lists with friends and family.
 - **Upcoming Features**: Stay tuned for upcoming features like in-app purchases and maybe even more languages!
 
+## Logo 🎂
+
+<img src="https://github.com/Frivox1/rememberme/assets/73830772/67918105-7c1f-4551-8625-2fd2ef5a838a" alt="Logo" width="200">
+
 ## Cloning the Project 🔍
 
 To clone the project, follow these steps:
@@ -70,6 +74,3 @@ flutter run
 ## Contact 📲
 
 For any questions or feedback, feel free to reach out to me at [mertens.valery@gmail.com](mailto:mertens.valery@gmail.com).
-
-![logo2 Background Removed](https://github.com/Frivox1/rememberme/assets/73830772/3b58f7ec-ee5b-4673-9e42-3f4bdddcb758)
-
