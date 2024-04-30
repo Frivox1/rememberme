@@ -70,3 +70,6 @@ flutter run
 ## Contact 📲
 
 For any questions or feedback, feel free to reach out to me at [mertens.valery@gmail.com](mailto:mertens.valery@gmail.com).
+
+![logo2 Background Removed](https://github.com/Frivox1/rememberme/assets/73830772/3b58f7ec-ee5b-4673-9e42-3f4bdddcb758)
+
