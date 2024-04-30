@@ -69,12 +69,14 @@ class HomeScreen extends StatelessWidget {
                             now.subtract(Duration(days: now.weekday - 1));
                         final endOfWeek =
                             startOfWeek.add(const Duration(days: 7));
-                        final birthdaysThisWeek = birthdays
-                            .where((birthday) =>
-                                birthday.birthday.month == now.month &&
-                                birthday.birthday.day >= startOfWeek.day &&
-                                birthday.birthday.day <= endOfWeek.day)
-                            .toList();
+
+                        final birthdaysThisWeek = birthdays.where((birthday) {
+                          final birthdayDate = DateTime(now.year,
+                              birthday.birthday.month, birthday.birthday.day);
+                          return birthdayDate.isAfter(startOfWeek) &&
+                              birthdayDate.isBefore(endOfWeek);
+                        }).toList();
+
                         if (birthdaysThisWeek.isEmpty) {
                           return Center(
                             child: Text(
