@@ -23,8 +23,8 @@
     "confirm_delete": "Are you sure you want to delete this birthday?",
     "cancel": "Cancel",
     "delete": "Delete",
-    "gift_ideas": "Gift Ideas:",
-    "age_celebrated": "Age celebrated:",
+    "gift_ideas": "Gift Ideas",
+    "age_celebrated": "Age celebrated",
     "settings": "Settings",
     "upgradeTo": "Upgrade to",
     "notifications": "Notifications",
@@ -46,5 +46,6 @@
     "import": "Import anniversary list",
     "noAnniversaries": "No anniversaries to export",
     "importSuccess": "Anniversaries imported successfully",
-    "validate": "Validate"
+    "validate": "Validate",
+    "next_birthday_in": "Next birthday in"
 }

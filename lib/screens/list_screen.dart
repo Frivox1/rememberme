@@ -43,9 +43,7 @@ class _ListScreenState extends State<ListScreen> {
                   _selectedPeriod = Period.values[index];
                 });
               },
-              borderRadius: BorderRadius.circular(
-                20.0,
-              ),
+              borderRadius: BorderRadius.circular(20.0),
               selectedBorderColor: Colors.white,
               selectedColor: Colors.white,
               fillColor: Colors.pink[400],
@@ -67,7 +65,7 @@ class _ListScreenState extends State<ListScreen> {
           ),
           const SizedBox(height: 20),
           Expanded(
-            child: FutureBuilder(
+            child: FutureBuilder<Box<Birthday>>(
               future: Hive.openBox<Birthday>('birthdays'),
               builder: (BuildContext context,
                   AsyncSnapshot<Box<Birthday>> snapshot) {
@@ -113,64 +111,85 @@ class _ListScreenState extends State<ListScreen> {
                         ),
                       );
                     }
-                    return Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: filteredBirthdays.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              final Birthday birthday =
-                                  filteredBirthdays[index];
-                              final age = _calculateAge(birthday.birthday);
-                              return ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 30.0, vertical: 20.0),
-                                title: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      birthday.name,
-                                      style: const TextStyle(
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          ListView(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            children: [
+                              ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: filteredBirthdays.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final Birthday birthday =
+                                      filteredBirthdays[index];
+                                  final age = _calculateAge(birthday.birthday);
+                                  final nextBirthday =
+                                      _calculateNextBirthday(birthday.birthday);
+                                  final timeUntilNextBirthday =
+                                      nextBirthday.difference(DateTime.now());
+
+                                  return ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 30.0, vertical: 20.0),
+                                    title: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          birthday.name,
+                                          style: const TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          '${AppLocalizations.of(context)!.gift_ideas}: \n${birthday.giftIdeas}',
+                                          style: const TextStyle(
+                                            fontSize: 16.0,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      '${AppLocalizations.of(context)!.gift_ideas} ${birthday.giftIdeas}',
-                                      style: const TextStyle(
-                                        fontSize: 16.0,
-                                      ),
+                                    trailing: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          '${birthday.birthday.day}/${birthday.birthday.month}/${birthday.birthday.year}',
+                                          style: const TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          '${AppLocalizations.of(context)!.age_celebrated} $age',
+                                          style: const TextStyle(
+                                            fontSize: 16.0,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Next birthday in ${timeUntilNextBirthday.inDays} days',
+                                          style: const TextStyle(
+                                            fontSize: 16.0,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                trailing: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      '${birthday.birthday.day}/${birthday.birthday.month}/${birthday.birthday.year}',
-                                      style: const TextStyle(
-                                        fontSize: 18.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      '${AppLocalizations.of(context)!.age_celebrated} $age',
-                                      style: const TextStyle(
-                                        fontSize: 16.0,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                onTap: () {
-                                  _showDeleteConfirmationDialog(birthday, box);
+                                    onTap: () {
+                                      _showDeleteConfirmationDialog(
+                                          birthday, box);
+                                    },
+                                  );
                                 },
-                              );
-                            },
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     );
                   }
                 } else {
@@ -202,6 +221,14 @@ class _ListScreenState extends State<ListScreen> {
       age--;
     }
     return age + 1;
+  }
+
+  DateTime _calculateNextBirthday(DateTime birthday) {
+    final now = DateTime.now();
+    final nextBirthday = DateTime(now.year, birthday.month, birthday.day);
+    return nextBirthday.isBefore(now)
+        ? DateTime(now.year + 1, birthday.month, birthday.day)
+        : nextBirthday;
   }
 
   void _deleteBirthday(Birthday birthday, Box<Birthday> box) {
