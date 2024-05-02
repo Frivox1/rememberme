@@ -306,6 +306,23 @@ class SettingsScreen extends StatelessWidget {
       String? path = result.files.single.path;
 
       if (path != null) {
+        // Vérifier le format du fichier
+        bool isFormatValid = await checkFileFormat(path);
+        if (!isFormatValid) {
+          // Afficher un message d'erreur si le format n'est pas valide
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Invalid file format!',
+                style: const TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+
+        // Le format du fichier est valide, continuer le traitement
         // Lire le contenu du fichier
         File file = File(path);
         String content = await file.readAsString();
@@ -344,6 +361,30 @@ class SettingsScreen extends StatelessWidget {
           ),
         );
       }
+    }
+  }
+
+  Future<bool> checkFileFormat(String filePath) async {
+    try {
+      File file = File(filePath);
+      String content = await file.readAsString();
+
+      // Vérifier si le contenu du fichier est conforme
+      List<String> lines = content.split('\n');
+      for (String line in lines) {
+        List<String> parts = line.split(' - ');
+        if (parts.length != 3) {
+          // Le fichier ne respecte pas le format attendu
+          return false;
+        }
+        // Vous pouvez ajouter d'autres vérifications selon vos besoins
+      }
+
+      // Le fichier respecte le format attendu
+      return true;
+    } catch (e) {
+      // Une erreur s'est produite lors de la lecture du fichier
+      return false;
     }
   }
 }
