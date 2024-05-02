@@ -47,5 +47,6 @@
     "noAnniversaries": "No anniversaries to export",
     "importSuccess": "Anniversaries imported successfully",
     "validate": "Validate",
-    "next_birthday_in": "Next birthday in"
+    "in_x": "In",
+    "days": "days"
 }

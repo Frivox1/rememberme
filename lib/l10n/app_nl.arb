@@ -46,5 +46,7 @@
     "import": "Importeer verjaardagslijst",
     "noAnniversaries": "Geen verjaardagen om te exporteren",
     "importSuccess": "Verjaardagen succesvol geïmporteerd",
-    "validate": "Valideren"
+    "validate": "Valideren",
+    "in_x": "In",
+    "days": "dagen"
 }

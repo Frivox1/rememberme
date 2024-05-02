@@ -46,5 +46,7 @@
   "import": "Importer des anniversaires",
   "noAnniversaries": "Aucun anniversaire à exporter",
   "importSuccess": "Anniversaires importés avec succès",
-  "validate": "Valider"
+  "validate": "Valider",
+  "in_x": "Dans",
+  "days": "jours"
 }

@@ -46,5 +46,7 @@
     "import": "Importieren",
     "noAnniversaries": "Keine Jahrestage",
     "importSuccess": "Import erfolgreich",
-    "validate": "Überprüfen"
+    "validate": "Überprüfen",
+    "in_x": "In",
+    "days": "Tagen"
 }

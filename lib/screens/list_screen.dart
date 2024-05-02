@@ -125,51 +125,55 @@ class _ListScreenState extends State<ListScreen> {
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 30.0, vertical: 20.0),
                           title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    birthday.name,
-                                    style: const TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      birthday.name,
+                                      style: const TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    '${AppLocalizations.of(context)!.gift_ideas}: \n${birthday.giftIdeas}',
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      '${AppLocalizations.of(context)!.gift_ideas}: \n${birthday.giftIdeas}',
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '${birthday.birthday.day}/${birthday.birthday.month}/${birthday.birthday.year}',
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
+                              const SizedBox(width: 20),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '${birthday.birthday.day}/${birthday.birthday.month}/${birthday.birthday.year}',
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    '${AppLocalizations.of(context)!.age_celebrated} $age',
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      '${AppLocalizations.of(context)!.age_celebrated} $age',
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    'Next birthday in ${timeUntilNextBirthday.inDays} days',
-                                    style: const TextStyle(
-                                      fontSize: 16.0,
+                                    Text(
+                                      '${AppLocalizations.of(context)!.in_x} ${timeUntilNextBirthday.inDays} ${AppLocalizations.of(context)!.days}',
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ],
                           ),
