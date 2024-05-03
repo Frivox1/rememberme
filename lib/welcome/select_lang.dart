@@ -3,7 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rememberme/models/language_model.dart';
 import 'package:rememberme/providers/langue_provider.dart';
-import 'package:rememberme/welcome/how_did_you_find_app_page.dart';
+import 'package:rememberme/welcome/welcome.dart';
 
 class SelectLang extends StatefulWidget {
   const SelectLang({Key? key}) : super(key: key);
@@ -120,7 +120,7 @@ class _SelectLangState extends State<SelectLang> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const HowDidYouFindAppPage(),
+                  builder: (context) => const WelcomePage(),
                 ),
               );
             } else {
