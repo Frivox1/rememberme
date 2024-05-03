@@ -10,6 +10,7 @@ import 'package:rememberme/providers/premium_provider.dart';
 import 'package:rememberme/screens/add_annif.dart';
 import 'package:rememberme/screens/home_screen.dart';
 import 'package:rememberme/screens/list_screen.dart';
+import 'package:rememberme/screens/ouverture.dart';
 import 'package:rememberme/screens/settings.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rememberme/welcome/select_lang.dart';
@@ -185,10 +186,7 @@ class MyApp extends StatelessWidget {
                 builder: (context, _) {
                   return Consumer<LanguageProvider>(
                     builder: (context, languageProvider, _) {
-                      // Récupérer la langue à partir du Provider
                       final providerLocale = languageProvider.locale;
-
-                      // Mettre à jour la locale avec la langue du Provider
                       return MaterialApp(
                         debugShowCheckedModeBanner: false,
                         title: 'RememberMe',
@@ -214,12 +212,23 @@ class MyApp extends StatelessWidget {
                               final appSettings = box.get('settings',
                                   defaultValue: AppSettings(isFirstTime: true));
                               if (appSettings!.isFirstTime) {
-                                return SelectLang();
+                                return const SelectLang();
                               } else {
-                                return HomeScreen();
+                                return FutureBuilder(
+                                  future: Future.delayed(
+                                      const Duration(seconds: 3)),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      return const HomeScreen();
+                                    } else {
+                                      return const OuvertureScreen();
+                                    }
+                                  },
+                                );
                               }
                             } else {
-                              return Scaffold(
+                              return const Scaffold(
                                 body: Center(
                                   child: CircularProgressIndicator(),
                                 ),
@@ -251,7 +260,6 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  // Fonction pour récupérer la locale stockée dans la boîte de données 'language'
   Future<Locale> getStoredLocale() async {
     final languageBox = Hive.box<LanguageModel>('language');
     final languageModel =
