@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:rememberme/models/app_settings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
 
+  @override
+  State<WelcomePage> createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,9 +32,19 @@ class WelcomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.asset(
+                'assets/logo2.jpg',
+                height: 250,
+                width: 250,
+              ),
+            ),
+            const SizedBox(height: 40),
             Text(
-              'Never Forget Birthdays',
-              style: TextStyle(
+              AppLocalizations.of(context)!.neverForgetBirthdays,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -36,7 +52,7 @@ class WelcomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              'RememberMe helps you keep track of birthdays so you never miss a special day!',
+              AppLocalizations.of(context)!.welcomeSubText,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -62,7 +78,7 @@ class WelcomePage extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
               ),
               child: Text(
-                'Get Started',
+                AppLocalizations.of(context)!.getStarted,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

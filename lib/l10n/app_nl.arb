@@ -48,5 +48,8 @@
     "importSuccess": "Verjaardagen succesvol geïmporteerd",
     "validate": "Valideren",
     "in_x": "In",
-    "days": "dagen"
+    "days": "dagen",
+    "neverForgetBirthdays": "Vergeet nooit meer een verjaardag",
+    "welcomeSubText": "RememberMe helpt je verjaardagen bij te houden zodat je nooit een speciale dag mist!",
+    "getStarted": "Aan de slag"
 }

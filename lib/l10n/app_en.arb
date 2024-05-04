@@ -48,5 +48,8 @@
     "importSuccess": "Anniversaries imported successfully",
     "validate": "Validate",
     "in_x": "In",
-    "days": "days"
+    "days": "days",
+    "neverForgetBirthdays": "Never forget a birthday again!",
+    "welcomeSubText": "RememberMe helps you keep track of birthdays so you never miss a special day!",
+    "getStarted": "Get Started"
 }

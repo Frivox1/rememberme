@@ -48,5 +48,8 @@
     "importSuccess": "Import erfolgreich",
     "validate": "Überprüfen",
     "in_x": "In",
-    "days": "Tagen"
+    "days": "Tagen",
+    "neverForgetBirthdays": "Geburtstage nie vergessen",
+    "welcomeSubText": "RememberMe hilft Ihnen, Ihre Geburtstage im Auge zu behalten, damit Sie keinen besonderen Tag verpassen!",
+    "getStarted": "Los geht's"
 }
