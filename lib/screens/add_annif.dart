@@ -4,11 +4,13 @@ import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/widgets/navbar.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:rememberme/providers/premium_provider.dart';
 
 class AddAnnifScreen extends StatefulWidget {
   const AddAnnifScreen({
-    Key? key, // Ajouter le paramètre manquant ici
-  }) : super(key: key); // Corriger la déclaration du constructeur
+    Key? key,
+  }) : super(key: key);
 
   @override
   _AddAnnifScreenState createState() => _AddAnnifScreenState();
@@ -66,10 +68,8 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
     final birthdayText = _birthdayController.text;
     final giftIdeas = _giftIdeasController.text;
 
-    // Vérifier si la date est au format correct "dd/MM/yyyy"
     final RegExp dateRegex = RegExp(r'^\d{2}/\d{2}/\d{4}$');
     if (!dateRegex.hasMatch(birthdayText)) {
-      // Afficher un message d'erreur si le format de la date est incorrect
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -82,7 +82,6 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
       return;
     }
 
-    // Convertir la date en DateTime
     final List<String> dateParts = birthdayText.split('/');
     final formattedDate = DateTime(int.parse(dateParts[2]),
         int.parse(dateParts[1]), int.parse(dateParts[0]));
@@ -93,28 +92,59 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
       giftIdeas: giftIdeas,
     );
 
-    // Ouvrir la boîte Hive pour accéder aux données
     final Box<Birthday> box = await Hive.openBox<Birthday>('birthdays');
 
-    // Ajouter l'anniversaire à la boîte Hive
-    await box.add(birthdayObject);
+    final premiumProvider =
+        Provider.of<PremiumProvider>(context, listen: false);
+    if (premiumProvider.isPremium || box.length < 15) {
+      await box.add(birthdayObject);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context)!.birthdayAddedSuccessfully,
-          style: const TextStyle(color: Colors.white, fontSize: 20),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.birthdayAddedSuccessfully,
+            style: const TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          backgroundColor: Colors.pink[200],
         ),
-        backgroundColor: Colors.pink[200],
-      ),
-    );
+      );
 
-    _nameController.clear();
-    _birthdayController.clear();
-    _giftIdeasController.clear();
+      _nameController.clear();
+      _birthdayController.clear();
+      _giftIdeasController.clear();
 
-    // Rediriger vers la page ListScreen après avoir ajouté l'anniversaire
-    Navigator.pushReplacementNamed(context, '/list');
+      Navigator.pushReplacementNamed(context, '/list');
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(AppLocalizations.of(context)!.upgradeToPremium),
+            content: Text(
+              AppLocalizations.of(context)!.annif_max,
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.cancel,
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/settings');
+                },
+                child: Text(
+                  'OK',
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -144,7 +174,7 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
                 focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink),
                 ),
-                prefixIcon: Icon(Icons.person), // Ajoutez l'icône ici
+                prefixIcon: Icon(Icons.person),
               ),
             ),
             const SizedBox(height: 35),
@@ -160,7 +190,7 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
                 focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink),
                 ),
-                prefixIcon: Icon(Icons.calendar_today), // Ajoutez l'icône ici
+                prefixIcon: Icon(Icons.calendar_today),
               ),
             ),
             const SizedBox(height: 35),
@@ -172,7 +202,7 @@ class _AddAnnifScreenState extends State<AddAnnifScreen> {
                 focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.pink),
                 ),
-                prefixIcon: Icon(Icons.card_giftcard), // Ajoutez l'icône ici
+                prefixIcon: Icon(Icons.card_giftcard),
               ),
               maxLines: null,
             ),

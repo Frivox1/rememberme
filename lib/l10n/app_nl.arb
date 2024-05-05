@@ -35,11 +35,6 @@
     "changeHour": "Wijzig de meldingstijd",
     "shareTheApp": "Deel de app",
     "rateTheApp": "Beoordeel de app",
-    "findTheApp": "Vind de app?",
-    "fromAFriend": "Van een vriend",
-    "sawAnAd": "Heeft een advertentie gezien",
-    "internetSearch": "Internet zoeken",
-    "other": "Anders",
     "pleaseSelectOption": "Selecteer een optie",
     "next": "Volgende",
     "export": "Exporteer verjaardagslijst",
@@ -51,5 +46,7 @@
     "days": "dagen",
     "neverForgetBirthdays": "Vergeet nooit meer een verjaardag",
     "welcomeSubText": "RememberMe helpt je verjaardagen bij te houden zodat je nooit een speciale dag mist!",
-    "getStarted": "Aan de slag"
+    "getStarted": "Aan de slag",
+    "annif_max": "Je hebt het maximale aantal verjaardagen bereikt. Upgrade naar premium.",
+    "invalidFileFormat": "Ongeldig bestandsformaat. Gebruik het juiste bestandsformaat."
 }

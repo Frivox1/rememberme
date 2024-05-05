@@ -12,7 +12,7 @@ class OuvertureScreen extends StatelessWidget {
           'RememberMe',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 36,
+            fontSize: 44,
             fontWeight: FontWeight.bold,
           ),
         ),

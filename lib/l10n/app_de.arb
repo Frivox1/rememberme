@@ -35,11 +35,6 @@
     "changeHour": "Uhrzeit der Benachrichtigung ändern",
     "shareTheApp": "App teilen",
     "rateTheApp": "App bewerten",
-    "findTheApp": "Finde die App?",
-    "fromAFriend": "Von einem Freund",
-    "sawAnAd": "Sah eine Anzeige",
-    "internetSearch": "Internet Suche",
-    "other": "Andere",
     "pleaseSelectOption": "Bitte wählen Sie eine Option",
     "next": "Weiter",
     "export": "Exportieren",
@@ -51,5 +46,7 @@
     "days": "Tagen",
     "neverForgetBirthdays": "Geburtstage nie vergessen",
     "welcomeSubText": "RememberMe hilft Ihnen, Ihre Geburtstage im Auge zu behalten, damit Sie keinen besonderen Tag verpassen!",
-    "getStarted": "Los geht's"
+    "getStarted": "Los geht's",
+    "annif_max": "Sie haben die maximale Anzahl an Geburtstagen erreicht. Bitte aktualisieren Sie auf Premium.",
+    "invalidFileFormat": "Ungültiges Dateiformat. Bitte verwenden Sie das richtige Dateiformat."
 }

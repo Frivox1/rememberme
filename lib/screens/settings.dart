@@ -313,7 +313,7 @@ class SettingsScreen extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Invalid file format!',
+                AppLocalizations.of(context)!.invalidFileFormat,
                 style: const TextStyle(color: Colors.white, fontSize: 20),
               ),
               backgroundColor: Colors.red,
@@ -348,6 +348,21 @@ class SettingsScreen extends StatelessWidget {
 
         // Ajouter les anniversaires à la boîte Hive
         final box = await Hive.openBox<Birthday>('birthdays');
+        if (!Provider.of<PremiumProvider>(context, listen: false).isPremium) {
+          // Vérifier si le nombre total d'anniversaires dépasse 15 pour les utilisateurs non premium
+          if (box.length + birthdays.length > 15) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context)!.annif_max,
+                  style: const TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                backgroundColor: Colors.red,
+              ),
+            );
+            return;
+          }
+        }
         await box.addAll(birthdays);
 
         // Afficher une notification de réussite
@@ -374,12 +389,9 @@ class SettingsScreen extends StatelessWidget {
       for (String line in lines) {
         List<String> parts = line.split(' - ');
         if (parts.length != 3) {
-          // Le fichier ne respecte pas le format attendu
           return false;
         }
-        // Vous pouvez ajouter d'autres vérifications selon vos besoins
       }
-
       // Le fichier respecte le format attendu
       return true;
     } catch (e) {

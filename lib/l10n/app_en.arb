@@ -35,11 +35,6 @@
     "changeHour": "Change notification time",
     "shareTheApp": "Share the app",
     "rateTheApp": "Rate the app",
-    "findTheApp": "Find the app?",
-    "fromAFriend": "From a friend",
-    "sawAnAd": "Saw an ad",
-    "internetSearch": "Internet search",
-    "other": "Other",
     "pleaseSelectOption": "Please select an option",
     "next": "Next",
     "export": "Export anniversary list",
@@ -51,5 +46,7 @@
     "days": "days",
     "neverForgetBirthdays": "Never forget a birthday again!",
     "welcomeSubText": "RememberMe helps you keep track of birthdays so you never miss a special day!",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "annif_max": "You have reached the maximum limit of birthdays. Please upgrade to premium.",
+    "invalidFileFormat": "Invalid file format. Please use the correct file format."
 }
