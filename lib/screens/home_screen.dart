@@ -48,6 +48,24 @@ class _HomeScreenState extends State<HomeScreen> {
     final upcomingBirthdays =
         Provider.of<BirthdayProvider>(context, listen: false).birthdays;
 
+    // Initialiser le Map
+    birthdaysByDate = {};
+
+    // Remplir le dictionnaire birthdaysByDate avec les anniversaires
+    for (var birthday in upcomingBirthdays) {
+      DateTime normalizedDay = DateTime(
+        0,
+        birthday.birthdayDate.month,
+        birthday.birthdayDate.day,
+      );
+
+      // Ajouter l'anniversaire au map
+      if (!birthdaysByDate.containsKey(normalizedDay)) {
+        birthdaysByDate[normalizedDay] = [];
+      }
+      birthdaysByDate[normalizedDay]!.add(birthday);
+    }
+
     // Calculer la différence de jours pour chaque anniversaire
     upcomingBirthdays.sort((a, b) {
       DateTime birthdayA = DateTime(
