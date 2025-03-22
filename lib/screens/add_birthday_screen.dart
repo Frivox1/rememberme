@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rememberme/models/birthday_model.dart';
-import 'package:rememberme/services/hive_service.dart';
+import 'package:rememberme/providers/birthday_provider.dart';
 
 class AddBirthdayScreen extends StatefulWidget {
   @override
@@ -18,7 +19,7 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
     return Scaffold(
       backgroundColor: Color(0xFFFFE5EC),
       appBar: AppBar(
-        backgroundColor: Color(0xFFFB6F92),
+        backgroundColor: Color(0xFFFF8FAB),
         elevation: 0,
         title: Text(
           'Ajouter un anniversaire',
@@ -188,7 +189,7 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
                   widthFactor: 0.8,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFFB6F92),
+                      backgroundColor: Color(0xFFFF8FAB),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -205,12 +206,21 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
                                 .toList(),
                       );
 
-                      // Ajouter l'anniversaire dans la base de données
-                      await HiveService.addBirthday(newBirthday);
+                      // Ajouter l'anniversaire dans le provider
+                      await Provider.of<BirthdayProvider>(
+                        context,
+                        listen: false,
+                      ).addBirthday(newBirthday);
 
                       // Afficher un message de confirmation ou rediriger
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Anniversaire enregistré !')),
+                        SnackBar(
+                          content: Text(
+                            'Anniversaire enregistré !',
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                          backgroundColor: Color(0xFFFF8FAB),
+                        ),
                       );
 
                       // Retourner à l'écran précédent

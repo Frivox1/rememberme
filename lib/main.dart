@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:rememberme/models/birthday_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:rememberme/screens/home_screen.dart';
 import 'package:rememberme/screens/welcome_screen.dart';
 import 'package:rememberme/services/hive_service.dart';
+import 'package:rememberme/providers/birthday_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,10 +46,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'RememberMe',
-      home: isFirstTime ? WelcomeScreen() : HomeScreen(),
+    return ChangeNotifierProvider(
+      create: (_) => BirthdayProvider(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'RememberMe',
+        home: isFirstTime ? WelcomeScreen() : HomeScreen(),
+      ),
     );
   }
 }
