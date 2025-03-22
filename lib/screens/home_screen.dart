@@ -17,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late DateTime selectedDay;
   late DateTime focusedDay;
   late Map<DateTime, List<Birthday>> birthdaysByDate;
+  int _currentPageIndex = 0;
 
   @override
   void initState() {
@@ -25,6 +26,16 @@ class _HomeScreenState extends State<HomeScreen> {
     focusedDay = now;
     birthdaysByDate = {};
     _loadUpcomingBirthdays();
+    _pageController.addListener(_onPageChanged);
+  }
+
+  void _onPageChanged() {
+    int nextPage = _pageController.page!.round();
+    if (nextPage != _currentPageIndex) {
+      setState(() {
+        _currentPageIndex = nextPage;
+      });
+    }
   }
 
   Future<void> _loadUpcomingBirthdays() async {
@@ -61,14 +72,12 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
 
-      // Ajouter à la liste des prochains anniversaires
       if (nextBirthdays.length < 3) {
         nextBirthdays.add(birthday);
       }
 
-      // Ajouter au calendrier sans tenir compte de l'année
       DateTime normalizedBirthdayDate = DateTime(
-        0, // Année arbitraire, elle ne sera pas utilisée
+        0,
         birthday.birthdayDate.month,
         birthday.birthdayDate.day,
       );
@@ -102,9 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return IconButton(
               icon: Icon(Icons.menu, color: Colors.white, size: 34),
               onPressed: () {
-                Scaffold.of(
-                  context,
-                ).openDrawer(); // Ouvrir le tiroir avec le context du Builder
+                Scaffold.of(context).openDrawer();
               },
             );
           },
@@ -126,24 +133,14 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(color: Colors.pinkAccent),
+              decoration: BoxDecoration(color: Color(0xFFFB6F92)),
               child: Text(
                 'Menu',
-                style: TextStyle(fontSize: 24, color: Colors.white),
+                style: TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
-            ListTile(
-              title: Text('Option 1'),
-              onTap: () {
-                // Gérer la navigation vers l'option 1
-              },
-            ),
-            ListTile(
-              title: Text('Option 2'),
-              onTap: () {
-                // Gérer la navigation vers l'option 2
-              },
-            ),
+            ListTile(title: Text('Option 1'), onTap: () {}),
+            ListTile(title: Text('Option 2'), onTap: () {}),
           ],
         ),
       ),
@@ -188,6 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   );
                                 }
                                 int age = now.year - birthday.birthdayDate.year;
+                                age += 2;
                                 if (now.isBefore(birthdayThisYear)) {
                                   age--;
                                 }
@@ -248,6 +246,27 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                             ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        upcomingBirthdays.length,
+                        (index) => Container(
+                          margin: EdgeInsets.symmetric(horizontal: 4),
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color:
+                                _currentPageIndex == index
+                                    ? Color(0xFFFB6F92)
+                                    : Colors.grey.shade400,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -285,15 +304,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     titleCentered: true,
                     leftChevronIcon: Icon(
                       Icons.chevron_left,
-                      color:
-                          Colors
-                              .pinkAccent, // Couleur rose pour le chevron gauche
+                      color: Colors.pinkAccent,
                     ),
                     rightChevronIcon: Icon(
                       Icons.chevron_right,
-                      color:
-                          Colors
-                              .pinkAccent, // Couleur rose pour le chevron droit
+                      color: Colors.pinkAccent,
                     ),
                   ),
                   daysOfWeekStyle: DaysOfWeekStyle(
@@ -310,14 +325,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (isBirthday) {
                         return Center(
                           child: Icon(
-                            Icons.cake, // Icône gâteau 🎂
+                            Icons.cake,
                             color: Colors.pinkAccent,
-                            size: 24, // Taille ajustable
+                            size: 26,
                           ),
                         );
                       }
 
-                      // Si ce n'est pas un anniversaire, afficher normalement la date
                       return null;
                     },
                   ),
