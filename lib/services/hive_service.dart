@@ -14,7 +14,7 @@ class HiveService {
   }
 
   // Lire tous les anniversaires
-  static Future<List<Birthday>> getBirthdays() async {
+  static Future<List<Birthday>> getAllBirthdays() async {
     var box = await openBirthdayBox();
     return box.values.toList();
   }

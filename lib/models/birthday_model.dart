@@ -14,4 +14,10 @@ class Birthday {
   final List<String>? giftIdeas;
 
   Birthday({required this.name, required this.birthdayDate, this.giftIdeas});
+
+  // Ajoute la méthode toString() pour un affichage lisible
+  @override
+  String toString() {
+    return 'Birthday{name: $name, birthdayDate: $birthdayDate, giftIdeas: $giftIdeas}';
+  }
 }
