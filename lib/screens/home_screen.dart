@@ -100,10 +100,50 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  /// Fonction pour calculer les jours restants avant un anniversaire
+  int daysUntilNextBirthday(DateTime birthday) {
+    DateTime now = DateTime.now();
+    DateTime nextBirthday = DateTime(now.year, birthday.month, birthday.day);
+
+    // Si l'anniversaire est déjà passé cette année, on prend celui de l'année prochaine
+    if (nextBirthday.isBefore(now)) {
+      nextBirthday = DateTime(now.year + 1, birthday.month, birthday.day);
+    }
+
+    return nextBirthday.difference(now).inDays;
+  }
+
+  int calculateAge(DateTime birthday) {
+    DateTime now = DateTime.now();
+    int age = now.year - birthday.year;
+
+    // Vérifier si l'anniversaire est déjà passé cette année
+    DateTime birthdayThisYear = DateTime(
+      now.year,
+      birthday.month,
+      birthday.day,
+    );
+    age++;
+    if (now.isBefore(birthdayThisYear)) {
+      age--; // Retirer 1 an si l'anniversaire n'est pas encore passé
+    }
+
+    return age;
+  }
+
   @override
   Widget build(BuildContext context) {
     // Accéder à la liste des anniversaires depuis le provider
-    final upcomingBirthdays = Provider.of<BirthdayProvider>(context).birthdays;
+    final upcomingBirthdays = List.from(
+      Provider.of<BirthdayProvider>(context).birthdays,
+    );
+
+    // Trier en fonction du nombre de jours restants
+    upcomingBirthdays.sort(
+      (a, b) => daysUntilNextBirthday(
+        a.birthdayDate,
+      ).compareTo(daysUntilNextBirthday(b.birthdayDate)),
+    );
 
     return Scaffold(
       backgroundColor: Color(0xFFFFE5EC),
@@ -214,15 +254,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   birthday.birthdayDate.day,
                                 );
                               }
-                              int age = now.year - birthday.birthdayDate.year;
-                              age += 2;
-                              if (now.isBefore(birthdayThisYear)) {
-                                age--;
-                              }
+                              int age = calculateAge(birthday.birthdayDate);
                               Duration daysUntilBirthday = birthdayThisYear
                                   .difference(now);
                               String daysRemaining =
-                                  '${daysUntilBirthday.inDays} jours';
+                                  '${daysUntilBirthday.inDays + 1} jours';
 
                               return Container(
                                 margin: EdgeInsets.symmetric(

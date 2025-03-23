@@ -5,9 +5,8 @@ import 'package:rememberme/providers/birthday_provider.dart';
 
 class BirthdayDetailsScreen extends StatelessWidget {
   final Birthday birthday;
-  final int birthdayIndex;
 
-  BirthdayDetailsScreen({required this.birthday, required this.birthdayIndex});
+  BirthdayDetailsScreen({required this.birthday});
 
   String formatFrenchDate(DateTime date) {
     const List<String> months = [
@@ -61,7 +60,7 @@ class BirthdayDetailsScreen extends StatelessWidget {
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 26,
+            fontSize: 22,
           ),
         ),
         backgroundColor: Color(0xFFFF8FAB),
@@ -152,10 +151,12 @@ class BirthdayDetailsScreen extends StatelessWidget {
                     padding: EdgeInsets.symmetric(vertical: 16),
                   ),
                   onPressed: () async {
-                    await Provider.of<BirthdayProvider>(
+                    final provider = Provider.of<BirthdayProvider>(
                       context,
                       listen: false,
-                    ).deleteBirthday(birthdayIndex);
+                    );
+
+                    await provider.deleteBirthday(birthday.id);
 
                     Navigator.pop(context);
                   },

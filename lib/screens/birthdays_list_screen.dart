@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rememberme/models/birthday_model.dart';
 import 'package:provider/provider.dart';
+import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/providers/birthday_provider.dart';
 import 'details_screen.dart';
 
@@ -10,13 +10,28 @@ class BirthdaysListScreen extends StatefulWidget {
 }
 
 class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
+  String _sortBy =
+      'Prochain anniversaire'; // Trier par défaut par ordre d'anniversaire proche
+
   @override
   void initState() {
     super.initState();
-    // Charger les anniversaires à partir du provider
     Future.delayed(Duration.zero, () {
       Provider.of<BirthdayProvider>(context, listen: false).loadBirthdays();
     });
+  }
+
+  /// Fonction pour calculer le nombre de jours restants avant un anniversaire
+  int daysUntilNextBirthday(DateTime birthday) {
+    DateTime now = DateTime.now();
+    DateTime nextBirthday = DateTime(now.year, birthday.month, birthday.day);
+
+    // Si l'anniversaire est déjà passé cette année, prendre celui de l'année prochaine
+    if (nextBirthday.isBefore(now)) {
+      nextBirthday = DateTime(now.year + 1, birthday.month, birthday.day);
+    }
+
+    return nextBirthday.difference(now).inDays;
   }
 
   @override
@@ -29,7 +44,7 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 26,
+            fontSize: 20,
           ),
         ),
         backgroundColor: Color(0xFFFF8FAB),
@@ -41,13 +56,46 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
             Navigator.of(context).pop();
           },
         ),
+        actions: [
+          PopupMenuButton<String>(
+            icon: Icon(Icons.sort, color: Colors.white),
+            onSelected: (String newValue) {
+              setState(() {
+                _sortBy = newValue;
+              });
+            },
+            itemBuilder:
+                (BuildContext context) => [
+                  PopupMenuItem(
+                    value: 'Prochain anniversaire',
+                    child: Text('Trier par date d\'arrivée'),
+                  ),
+                  PopupMenuItem(
+                    value: 'Alphabetique',
+                    child: Text('Trier par nom'),
+                  ),
+                ],
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         child: Consumer<BirthdayProvider>(
           builder: (context, birthdayProvider, child) {
-            // Récupère la liste des anniversaires depuis le provider
-            List<Birthday> birthdays = birthdayProvider.birthdays;
+            List<Birthday> birthdays = List.from(birthdayProvider.birthdays);
+
+            // Trier en fonction du mode sélectionné
+            if (_sortBy == 'Prochain anniversaire') {
+              birthdays.sort(
+                (a, b) => daysUntilNextBirthday(
+                  a.birthdayDate,
+                ).compareTo(daysUntilNextBirthday(b.birthdayDate)),
+              );
+            } else if (_sortBy == 'Alphabetique') {
+              birthdays.sort(
+                (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+              );
+            }
 
             if (birthdays.isEmpty) {
               return Center(
@@ -62,6 +110,7 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
               itemCount: birthdays.length,
               itemBuilder: (context, index) {
                 final birthday = birthdays[index];
+                int daysLeft = daysUntilNextBirthday(birthday.birthdayDate);
 
                 return Card(
                   shape: RoundedRectangleBorder(
@@ -88,7 +137,7 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
                       ),
                     ),
                     subtitle: Text(
-                      'Anniversaire le : ${birthday.birthdayDate.day}/${birthday.birthdayDate.month}',
+                      'Anniversaire le ${birthday.birthdayDate.day}/${birthday.birthdayDate.month} - Dans $daysLeft jours',
                       style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                     ),
                     trailing: Icon(
@@ -101,10 +150,8 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
                         context,
                         MaterialPageRoute(
                           builder:
-                              (context) => BirthdayDetailsScreen(
-                                birthday: birthday,
-                                birthdayIndex: index,
-                              ),
+                              (context) =>
+                                  BirthdayDetailsScreen(birthday: birthday),
                         ),
                       );
                     },

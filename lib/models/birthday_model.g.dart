@@ -17,21 +17,24 @@ class BirthdayAdapter extends TypeAdapter<Birthday> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Birthday(
-      name: fields[0] as String,
-      birthdayDate: fields[1] as DateTime,
-      giftIdeas: (fields[2] as List?)?.cast<String>(),
+      id: fields[0] as String,
+      name: fields[1] as String,
+      birthdayDate: fields[2] as DateTime,
+      giftIdeas: (fields[3] as List?)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Birthday obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
-      ..write(obj.name)
+      ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.birthdayDate)
+      ..write(obj.name)
       ..writeByte(2)
+      ..write(obj.birthdayDate)
+      ..writeByte(3)
       ..write(obj.giftIdeas);
   }
 

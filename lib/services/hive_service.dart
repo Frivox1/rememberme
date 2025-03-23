@@ -19,10 +19,14 @@ class HiveService {
     return box.values.toList();
   }
 
-  // Supprimer un anniversaire
-  static Future<void> deleteBirthday(int index) async {
+  // Supprimer un anniversaire par son ID
+  static Future<void> deleteBirthdayById(String id) async {
     var box = await openBirthdayBox();
-    await box.deleteAt(index);
+    // Recherche de l'anniversaire à supprimer en utilisant son ID
+    final birthdayIndex = box.values.toList().indexWhere((b) => b.id == id);
+    if (birthdayIndex != -1) {
+      await box.deleteAt(birthdayIndex); // Suppression de l'élément
+    }
   }
 
   // Mettre à jour un anniversaire

@@ -1,23 +1,25 @@
 import 'package:hive_ce/hive.dart';
 
-part 'birthday_model.g.dart';
+part 'birthday_model.g.dart'; // Si vous utilisez Hive généré
 
 @HiveType(typeId: 0)
 class Birthday {
   @HiveField(0)
-  final String name;
+  final String id;
 
   @HiveField(1)
-  final DateTime birthdayDate;
+  final String name;
 
   @HiveField(2)
+  final DateTime birthdayDate;
+
+  @HiveField(3)
   final List<String>? giftIdeas;
 
-  Birthday({required this.name, required this.birthdayDate, this.giftIdeas});
-
-  // Ajoute la méthode toString() pour un affichage lisible
-  @override
-  String toString() {
-    return 'Birthday{name: $name, birthdayDate: $birthdayDate, giftIdeas: $giftIdeas}';
-  }
+  Birthday({
+    required this.id,
+    required this.name,
+    required this.birthdayDate,
+    this.giftIdeas,
+  });
 }
