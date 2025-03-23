@@ -145,6 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ).compareTo(daysUntilNextBirthday(b.birthdayDate)),
     );
 
+    final limitedUpcomingBirthdays = upcomingBirthdays.take(3).toList();
+
     return Scaffold(
       backgroundColor: Color(0xFFFFE5EC),
       appBar: AppBar(
@@ -226,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   height: 150,
                   child:
-                      upcomingBirthdays.isEmpty
+                      limitedUpcomingBirthdays.isEmpty
                           ? Center(
                             child: Text(
                               "Aucun anniversaire à venir",
@@ -239,9 +241,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           )
                           : PageView.builder(
                             controller: _pageController,
-                            itemCount: upcomingBirthdays.length,
+                            itemCount: limitedUpcomingBirthdays.length,
                             itemBuilder: (context, index) {
-                              Birthday birthday = upcomingBirthdays[index];
+                              Birthday birthday =
+                                  limitedUpcomingBirthdays[index];
                               DateTime birthdayThisYear = DateTime(
                                 now.year,
                                 birthday.birthdayDate.month,
@@ -316,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
-                      upcomingBirthdays.length,
+                      limitedUpcomingBirthdays.length,
                       (index) => Container(
                         margin: EdgeInsets.symmetric(horizontal: 4),
                         width: 8,
