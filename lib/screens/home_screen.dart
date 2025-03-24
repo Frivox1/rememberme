@@ -6,6 +6,7 @@ import 'package:rememberme/providers/birthday_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'details_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -78,6 +79,16 @@ class _HomeScreenState extends State<HomeScreen> {
       age--;
     }
     return age;
+  }
+
+  Future<void> _openSMSApp() async {
+    // Ouvrir l'application de messagerie
+    final url = 'sms:';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Impossible d\'ouvrir l\'application de messagerie';
+    }
   }
 
   @override
@@ -163,110 +174,161 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             SizedBox(height: 22),
 
-            // Si c'est l'anniversaire de quelqu'un aujourd'hui
+            // Si c'est l'anniversaire de plusieurs personnes aujourd'hui
             if (birthdaysByDate.containsKey(DateTime(0, now.month, now.day)))
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: theme.cardColor,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 2,
-                        blurRadius: 2,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Titre de l'anniversaire
-                        Text(
-                          "C'est l'anniversaire de ${birthdaysByDate[DateTime(0, now.month, now.day)]![0].name} aujourd'hui ! N'oublie pas de lui souhaiter ! 🎂",
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: theme.colorScheme.onSurface,
-                          ),
-                        ),
-                        SizedBox(height: 26),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  // Naviguer vers l'écran des détails
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => BirthdayDetailsScreen(
-                                            birthday:
-                                                birthdaysByDate[DateTime(
-                                                  0,
-                                                  now.month,
-                                                  now.day,
-                                                )]![0],
-                                          ),
+                child: Column(
+                  children:
+                      birthdaysByDate[DateTime(0, now.month, now.day)]!.map((
+                        birthday,
+                      ) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: 16.0,
+                          ), // Ajoute de l'espace entre les cartes
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: theme.cardColor,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  spreadRadius: 2,
+                                  blurRadius: 2,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Titre de l'anniversaire avec le nom coloré
+                                  Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: "C'est l'anniversaire de ",
+                                          style: theme.textTheme.titleLarge
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                                color:
+                                                    theme
+                                                        .textTheme
+                                                        .titleLarge
+                                                        ?.color, // Couleur existante
+                                              ),
+                                        ),
+                                        TextSpan(
+                                          text: "${birthday.name} ",
+                                          style: theme.textTheme.titleLarge
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                                color:
+                                                    theme
+                                                        .colorScheme
+                                                        .secondary, // Couleur secondaire pour le nom
+                                              ),
+                                        ),
+                                        TextSpan(
+                                          text:
+                                              "aujourd'hui ! N'oublie pas de lui souhaiter ! 🎂",
+                                          style: theme.textTheme.titleLarge
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                                color:
+                                                    theme
+                                                        .textTheme
+                                                        .titleLarge
+                                                        ?.color, // Couleur existante pour le reste
+                                              ),
+                                        ),
+                                      ],
                                     ),
-                                  );
-                                },
-                                icon: Icon(Icons.info_outline),
-                                label: Text("Details"),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: theme.colorScheme.onPrimary,
-                                  foregroundColor: theme.colorScheme.primary,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
+                                  SizedBox(height: 26),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton.icon(
+                                          onPressed: () {
+                                            // Naviguer vers l'écran des détails
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (context) =>
+                                                        BirthdayDetailsScreen(
+                                                          birthday: birthday,
+                                                        ),
+                                              ),
+                                            );
+                                          },
+                                          icon: Icon(Icons.info_outline),
+                                          label: Text("Details"),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                theme.colorScheme.onPrimary,
+                                            foregroundColor:
+                                                theme.colorScheme.primary,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 12),
+                                      Expanded(
+                                        child: ElevatedButton.icon(
+                                          onPressed: () {
+                                            // ouvrir l'application message
+                                            _openSMSApp();
+                                          },
+                                          icon: Icon(
+                                            Icons.message_outlined,
+                                            color: Colors.white,
+                                          ),
+                                          label: Text(
+                                            "Message",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                theme.colorScheme.secondary,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 16,
+                                              vertical: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
+                                ],
                               ),
                             ),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  // ouvrir l'application message
-                                },
-                                icon: Icon(
-                                  Icons.message_outlined,
-                                  color: Colors.white,
-                                ),
-                                label: Text(
-                                  "Message",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: theme.colorScheme.secondary,
-
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                          ),
+                        );
+                      }).toList(),
                 ),
               ),
 
-            const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Align(
