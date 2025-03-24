@@ -20,22 +20,23 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // Accéder au thème actuel
+
     return Scaffold(
-      backgroundColor: Color(0xFFFFE5EC),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Color(0xFFFF8FAB),
-        elevation: 0,
         title: Text(
-          'Ajouter un anniversaire',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
-          ),
+          "Ajouter un Anniversaire",
+          style: theme.appBarTheme.titleTextStyle,
         ),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: theme.appBarTheme.iconTheme?.color,
+          ),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -49,32 +50,40 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 32),
-                // Champ pour le nom
                 TextField(
                   controller: _nameController,
-                  cursorColor: Color(0xFFFB6F92),
+                  cursorColor:
+                      theme
+                          .colorScheme
+                          .primary, // Utiliser la couleur primaire pour le curseur
                   decoration: InputDecoration(
                     hintText: 'Nom',
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor:
+                        theme
+                            .colorScheme
+                            .surface, // Utiliser la couleur de surface pour le fond du champ
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(
-                        color: Color(0xFFFF8FAB),
+                        color: theme.colorScheme.primary,
                         width: 1,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(
-                        color: Color(0xFFFF8FAB),
+                        color: theme.colorScheme.primary,
                         width: 1,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(
-                        color: Color(0xFFFB6F92),
+                        color:
+                            theme
+                                .colorScheme
+                                .secondary, // Utiliser la couleur secondaire pour la bordure focus
                         width: 2,
                       ),
                     ),
@@ -91,7 +100,10 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
-                    color: Color(0xFFFF8FAB),
+                    color:
+                        theme
+                            .colorScheme
+                            .primary, // Couleur primaire pour le texte
                   ),
                 ),
                 SizedBox(
@@ -116,13 +128,19 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
-                        color: Color(0xFFFF8FAB),
+                        color:
+                            theme
+                                .colorScheme
+                                .primary, // Couleur primaire pour le texte
                       ),
                     ),
                     IconButton(
                       icon: Icon(
                         Icons.add_circle_outline,
-                        color: Color(0xFFFB6F92),
+                        color:
+                            theme
+                                .colorScheme
+                                .secondary, // Couleur secondaire pour l'icône
                       ),
                       onPressed: () {
                         setState(() {
@@ -142,30 +160,36 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
                             children: [
                               Expanded(
                                 child: TextField(
-                                  cursorColor: Color(0xFFFB6F92),
+                                  cursorColor:
+                                      theme
+                                          .colorScheme
+                                          .primary, // Couleur du curseur
                                   controller: controller,
                                   decoration: InputDecoration(
                                     hintText: 'Idée cadeau',
                                     filled: true,
-                                    fillColor: Color(0xFFFFC2D1),
+                                    fillColor:
+                                        theme
+                                            .colorScheme
+                                            .surfaceVariant, // Surface variant pour le fond
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
                                       borderSide: BorderSide(
-                                        color: Color(0xFFFF8FAB),
+                                        color: theme.colorScheme.primary,
                                         width: 1,
                                       ),
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
                                       borderSide: BorderSide(
-                                        color: Color(0xFFFF8FAB),
+                                        color: theme.colorScheme.primary,
                                         width: 1,
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
                                       borderSide: BorderSide(
-                                        color: Color(0xFFFB6F92),
+                                        color: theme.colorScheme.secondary,
                                         width: 2,
                                       ),
                                     ),
@@ -179,7 +203,7 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
                               IconButton(
                                 icon: Icon(
                                   Icons.remove_circle,
-                                  color: Color(0xFFFF8FAB),
+                                  color: theme.colorScheme.primary,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -198,7 +222,10 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
                     widthFactor: 0.8,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFF8FAB),
+                        backgroundColor:
+                            theme
+                                .colorScheme
+                                .primary, // Couleur primaire pour le bouton
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -228,11 +255,17 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
                             content: Text(
                               'Anniversaire enregistré !',
                               style: TextStyle(
-                                color: Colors.white,
+                                color:
+                                    theme
+                                        .colorScheme
+                                        .onPrimary, // Texte sur couleur primaire
                                 fontSize: 20,
                               ),
                             ),
-                            backgroundColor: Color(0xFFFF8FAB),
+                            backgroundColor:
+                                theme
+                                    .colorScheme
+                                    .primary, // Couleur de fond du snack bar
                           ),
                         );
 
@@ -242,7 +275,7 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
                       child: Text(
                         'Enregistrer',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: theme.colorScheme.onPrimary, // Texte du bouton
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),

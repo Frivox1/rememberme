@@ -39,130 +39,71 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // Charger les anniversaires
   Future<void> _loadUpcomingBirthdays() async {
-    // Utiliser le provider pour récupérer les anniversaires
     await Provider.of<BirthdayProvider>(context, listen: false).loadBirthdays();
-
-    // Trier les anniversaires par le nombre de jours avant l'anniversaire
     final upcomingBirthdays =
         Provider.of<BirthdayProvider>(context, listen: false).birthdays;
 
-    // Initialiser le Map
     birthdaysByDate = {};
-
-    // Remplir le dictionnaire birthdaysByDate avec les anniversaires
     for (var birthday in upcomingBirthdays) {
       DateTime normalizedDay = DateTime(
         0,
         birthday.birthdayDate.month,
         birthday.birthdayDate.day,
       );
-
-      // Ajouter l'anniversaire au map
-      if (!birthdaysByDate.containsKey(normalizedDay)) {
-        birthdaysByDate[normalizedDay] = [];
-      }
-      birthdaysByDate[normalizedDay]!.add(birthday);
+      birthdaysByDate.putIfAbsent(normalizedDay, () => []).add(birthday);
     }
 
-    // Calculer la différence de jours pour chaque anniversaire
     upcomingBirthdays.sort((a, b) {
-      DateTime birthdayA = DateTime(
-        now.year,
-        a.birthdayDate.month,
-        a.birthdayDate.day,
-      );
-      if (birthdayA.isBefore(now)) {
-        birthdayA = DateTime(
-          now.year + 1,
-          a.birthdayDate.month,
-          a.birthdayDate.day,
-        );
-      }
-      Duration diffA = birthdayA.difference(now);
-
-      DateTime birthdayB = DateTime(
-        now.year,
-        b.birthdayDate.month,
-        b.birthdayDate.day,
-      );
-      if (birthdayB.isBefore(now)) {
-        birthdayB = DateTime(
-          now.year + 1,
-          b.birthdayDate.month,
-          b.birthdayDate.day,
-        );
-      }
-      Duration diffB = birthdayB.difference(now);
-
-      return diffA.inDays.compareTo(diffB.inDays);
+      int diffA = daysUntilNextBirthday(a.birthdayDate);
+      int diffB = daysUntilNextBirthday(b.birthdayDate);
+      return diffA.compareTo(diffB);
     });
   }
 
-  /// Fonction pour calculer les jours restants avant un anniversaire
   int daysUntilNextBirthday(DateTime birthday) {
     DateTime now = DateTime.now();
     DateTime nextBirthday = DateTime(now.year, birthday.month, birthday.day);
-
-    // Si l'anniversaire est déjà passé cette année, on prend celui de l'année prochaine
     if (nextBirthday.isBefore(now)) {
       nextBirthday = DateTime(now.year + 1, birthday.month, birthday.day);
     }
-
     return nextBirthday.difference(now).inDays;
   }
 
   int calculateAge(DateTime birthday) {
     DateTime now = DateTime.now();
     int age = now.year - birthday.year;
-
-    // Vérifier si l'anniversaire est déjà passé cette année
-    DateTime birthdayThisYear = DateTime(
-      now.year,
-      birthday.month,
-      birthday.day,
-    );
-    age++;
-    if (now.isBefore(birthdayThisYear)) {
-      age--; // Retirer 1 an si l'anniversaire n'est pas encore passé
+    if (now.isBefore(DateTime(now.year, birthday.month, birthday.day))) {
+      age--;
     }
-
     return age;
   }
 
   @override
   Widget build(BuildContext context) {
-    // Accéder à la liste des anniversaires depuis le provider
+    final theme = Theme.of(context);
     final upcomingBirthdays = List.from(
       Provider.of<BirthdayProvider>(context).birthdays,
     );
-
-    // Trier en fonction du nombre de jours restants
     upcomingBirthdays.sort(
       (a, b) => daysUntilNextBirthday(
         a.birthdayDate,
       ).compareTo(daysUntilNextBirthday(b.birthdayDate)),
     );
-
     final limitedUpcomingBirthdays = upcomingBirthdays.take(3).toList();
 
     return Scaffold(
-      backgroundColor: Color(0xFFFFE5EC),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Color(0xFFFF8FAB),
-        title: Text(
-          'RememberMe',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: Text('RememberMe', style: theme.textTheme.headlineMedium),
         leading: Builder(
           builder: (context) {
             return IconButton(
-              icon: Icon(Icons.menu, color: Colors.white, size: 34),
+              icon: Icon(
+                Icons.menu,
+                color: theme.appBarTheme.foregroundColor,
+                size: 34,
+              ),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
@@ -171,7 +112,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add_circle_outline, color: Colors.white, size: 34),
+            icon: Icon(
+              Icons.add_circle_outline,
+              color: theme.appBarTheme.foregroundColor,
+              size: 34,
+            ),
             onPressed: () {
               Navigator.push(
                 context,
@@ -186,15 +131,21 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFFFF8FAB)),
+              decoration: BoxDecoration(color: theme.colorScheme.primary),
               child: Text(
                 'Menu',
-                style: TextStyle(color: Colors.white, fontSize: 28),
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  color: theme.colorScheme.onPrimary, // Contraste avec le fond
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             ListTile(
-              leading: Icon(Icons.list_outlined),
-              title: Text('Liste des anniversaires'),
+              leading: Icon(Icons.list_outlined, color: theme.iconTheme.color),
+              title: Text(
+                'Liste des anniversaires',
+                style: theme.textTheme.bodyLarge,
+              ),
               onTap: () {
                 Navigator.push(
                   context,
@@ -204,140 +155,106 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-            ListTile(title: Text('Option 2'), onTap: () {}),
           ],
         ),
       ),
       body: Column(
         children: [
-          Container(
-            child: Column(
-              children: [
-                const SizedBox(height: 24),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "Prochains anniversaires",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFFB6F92),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 150,
-                  child:
-                      limitedUpcomingBirthdays.isEmpty
-                          ? Center(
-                            child: Text(
-                              "Aucun anniversaire à venir",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[900],
-                              ),
-                            ),
-                          )
-                          : PageView.builder(
-                            controller: _pageController,
-                            itemCount: limitedUpcomingBirthdays.length,
-                            itemBuilder: (context, index) {
-                              Birthday birthday =
-                                  limitedUpcomingBirthdays[index];
-                              DateTime birthdayThisYear = DateTime(
-                                now.year,
-                                birthday.birthdayDate.month,
-                                birthday.birthdayDate.day,
-                              );
-                              if (birthdayThisYear.isBefore(now)) {
-                                birthdayThisYear = DateTime(
-                                  now.year + 1,
-                                  birthday.birthdayDate.month,
-                                  birthday.birthdayDate.day,
-                                );
-                              }
-                              int age = calculateAge(birthday.birthdayDate);
-                              Duration daysUntilBirthday = birthdayThisYear
-                                  .difference(now);
-                              String daysRemaining =
-                                  '${daysUntilBirthday.inDays + 1} jours';
-
-                              return Container(
-                                margin: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(24),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.2),
-                                      spreadRadius: 1,
-                                      blurRadius: 3,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                height: 100,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 8.0,
-                                    horizontal: 16.0,
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        birthday.name,
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFFFB6F92),
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        '$age ans dans $daysRemaining',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: Color(0xFFFF8FAB),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      limitedUpcomingBirthdays.length,
-                      (index) => Container(
-                        margin: EdgeInsets.symmetric(horizontal: 4),
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color:
-                              _currentPageIndex == index
-                                  ? Color(0xFFFB6F92)
-                                  : Colors.grey.shade400,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+          SizedBox(height: 22),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Prochains anniversaires",
+                style: theme.textTheme.titleLarge,
+              ),
             ),
           ),
+          SizedBox(
+            height: 150,
+            child:
+                limitedUpcomingBirthdays.isEmpty
+                    ? Center(
+                      child: Text(
+                        "Aucun anniversaire à venir",
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                    )
+                    : PageView.builder(
+                      controller: _pageController,
+                      itemCount: limitedUpcomingBirthdays.length,
+                      itemBuilder: (context, index) {
+                        Birthday birthday = limitedUpcomingBirthdays[index];
+                        int age = calculateAge(birthday.birthdayDate) + 1;
+                        int daysRemaining =
+                            daysUntilNextBirthday(birthday.birthdayDate) + 1;
+
+                        return Container(
+                          margin: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: theme.cardColor,
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: theme.shadowColor.withOpacity(0.2),
+                                spreadRadius: 1,
+                                blurRadius: 3,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          height: 100,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8.0,
+                              horizontal: 16.0,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  birthday.name,
+                                  style: theme.textTheme.headlineMedium,
+                                ),
+                                SizedBox(height: 6),
+                                Text(
+                                  '$age ans dans $daysRemaining jours',
+                                  style: theme.textTheme.titleMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                limitedUpcomingBirthdays.length,
+                (index) => Container(
+                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color:
+                        _currentPageIndex == index
+                            ? theme.colorScheme.secondary
+                            : theme.colorScheme.secondary.withOpacity(0.4),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 24),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -351,55 +268,81 @@ class _HomeScreenState extends State<HomeScreen> {
                     this.selectedDay = selectedDay;
                     this.focusedDay = focusedDay;
                   });
+
+                  // Vérifier s'il y a des anniversaires pour cette journée
+                  DateTime normalizedDay = DateTime(
+                    0,
+                    selectedDay.month,
+                    selectedDay.day,
+                  );
+                  List<Birthday>? birthdaysOnSelectedDay =
+                      birthdaysByDate[normalizedDay];
+
+                  // Afficher le dialog avec condition
+                  _showBirthdayDialog(birthdaysOnSelectedDay);
                 },
+                startingDayOfWeek: StartingDayOfWeek.monday,
                 eventLoader: (day) {
                   DateTime normalizedDay = DateTime(0, day.month, day.day);
                   return birthdaysByDate[normalizedDay] ?? [];
                 },
                 calendarStyle: CalendarStyle(
+                  defaultTextStyle: TextStyle(
+                    color: theme.textTheme.bodyLarge?.color,
+                  ),
                   todayDecoration: BoxDecoration(
-                    color: Colors.pinkAccent,
+                    color: theme.colorScheme.secondary,
                     shape: BoxShape.circle,
                   ),
                   selectedDecoration: BoxDecoration(
-                    color: Colors.pinkAccent,
+                    color: theme.colorScheme.primary,
                     shape: BoxShape.circle,
+                  ),
+                  selectedTextStyle: TextStyle(
+                    color: theme.colorScheme.onPrimary,
+                  ),
+                  todayTextStyle: TextStyle(color: Colors.white),
+                  weekendTextStyle: TextStyle(
+                    color: theme.textTheme.bodyLarge?.color,
                   ),
                   markersMaxCount: 0,
                 ),
                 headerStyle: HeaderStyle(
                   formatButtonVisible: false,
                   titleCentered: true,
+                  titleTextStyle: TextStyle(
+                    color: theme.textTheme.headlineMedium?.color,
+                    fontSize: 20,
+                  ),
                   leftChevronIcon: Icon(
                     Icons.chevron_left,
-                    color: Colors.pinkAccent,
+                    color: theme.iconTheme.color,
                   ),
                   rightChevronIcon: Icon(
                     Icons.chevron_right,
-                    color: Colors.pinkAccent,
+                    color: theme.iconTheme.color,
                   ),
                 ),
                 daysOfWeekStyle: DaysOfWeekStyle(
-                  weekdayStyle: TextStyle(color: Colors.black),
-                  weekendStyle: TextStyle(color: Colors.black),
+                  weekdayStyle: TextStyle(
+                    color: theme.textTheme.bodyLarge?.color,
+                  ),
+                  weekendStyle: TextStyle(
+                    color: theme.textTheme.bodyLarge?.color,
+                  ),
                 ),
                 calendarBuilders: CalendarBuilders(
                   defaultBuilder: (context, day, focusedDay) {
                     DateTime normalizedDay = DateTime(0, day.month, day.day);
-                    bool isBirthday = birthdaysByDate.containsKey(
-                      normalizedDay,
-                    );
-
-                    if (isBirthday) {
+                    if (birthdaysByDate.containsKey(normalizedDay)) {
                       return Center(
                         child: Icon(
                           Icons.cake,
-                          color: Colors.pinkAccent,
+                          color: theme.colorScheme.secondary,
                           size: 26,
                         ),
                       );
                     }
-
                     return null;
                   },
                 ),
@@ -408,6 +351,65 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _openAddBirthdayScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddBirthdayScreen()),
+    ).then((_) => _loadUpcomingBirthdays());
+  }
+
+  void _showBirthdayDialog(List<Birthday>? birthdaysOnSelectedDay) {
+    final theme = Theme.of(context);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            birthdaysOnSelectedDay != null && birthdaysOnSelectedDay.isNotEmpty
+                ? 'Anniversaires du jour'
+                : 'Pas d\'anniversaire aujourd\'hui',
+            style: theme.textTheme.titleLarge,
+          ),
+          content:
+              birthdaysOnSelectedDay != null &&
+                      birthdaysOnSelectedDay.isNotEmpty
+                  ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children:
+                        birthdaysOnSelectedDay.map((birthday) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: Text(
+                              birthday.name,
+                              style: theme.textTheme.bodyLarge,
+                            ),
+                          );
+                        }).toList(),
+                  )
+                  : Text(
+                    'Pas encore d\'anniversaire pour ce jour-là.',
+                    style: theme.textTheme.bodyMedium,
+                  ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Fermer'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _openAddBirthdayScreen();
+              },
+              child: Text('Ajouter un anniversaire'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

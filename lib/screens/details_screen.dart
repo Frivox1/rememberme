@@ -29,6 +29,7 @@ class BirthdayDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final int age = DateTime.now().year - birthday.birthdayDate.year;
 
     final DateTime nextBirthday =
@@ -53,21 +54,20 @@ class BirthdayDetailsScreen extends StatelessWidget {
     final String formattedBirthday = formatFrenchDate(birthday.birthdayDate);
 
     return Scaffold(
-      backgroundColor: Color(0xFFFFE5EC),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           "Détails de l'Anniversaire",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
+          style: theme.appBarTheme.titleTextStyle,
         ),
-        backgroundColor: Color(0xFFFF8FAB),
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: theme.appBarTheme.iconTheme?.color,
+          ),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -80,38 +80,21 @@ class BirthdayDetailsScreen extends StatelessWidget {
           children: [
             SizedBox(height: 40),
             Center(
-              child: Text(
-                birthday.name,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
+              child: Text(birthday.name, style: theme.textTheme.headlineMedium),
             ),
             SizedBox(height: 10),
             Center(
-              child: Text(
-                formattedBirthday,
-                style: TextStyle(fontSize: 20, color: Colors.black87),
-              ),
+              child: Text(formattedBirthday, style: theme.textTheme.titleLarge),
             ),
             SizedBox(height: 10),
             Center(
               child: Text(
                 "$age ans dans $daysUntilNextBirthday jours",
-                style: TextStyle(fontSize: 18, color: Colors.black87),
+                style: theme.textTheme.bodyLarge,
               ),
             ),
             SizedBox(height: 40),
-            Text(
-              "Idées cadeaux :",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
+            Text("Idées cadeaux :", style: theme.textTheme.titleLarge),
             SizedBox(height: 10),
             if (birthday.giftIdeas != null && birthday.giftIdeas!.isNotEmpty)
               ...birthday.giftIdeas!.map(
@@ -121,30 +104,24 @@ class BirthdayDetailsScreen extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.circle_outlined,
-                        color: Colors.black87,
+                        color: theme.iconTheme.color,
                         size: 16,
                       ),
                       SizedBox(width: 12),
-                      Text(
-                        idea,
-                        style: TextStyle(fontSize: 18, color: Colors.black87),
-                      ),
+                      Text(idea, style: theme.textTheme.bodyLarge),
                     ],
                   ),
                 ),
               )
             else
-              Text(
-                "Pas d'idées cadeaux.",
-                style: TextStyle(fontSize: 18, color: Colors.black87),
-              ),
+              Text("Pas d'idées cadeaux.", style: theme.textTheme.bodyLarge),
             Spacer(),
             Center(
               child: FractionallySizedBox(
                 widthFactor: 0.8,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFFF8FAB),
+                    backgroundColor: theme.colorScheme.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -163,7 +140,7 @@ class BirthdayDetailsScreen extends StatelessWidget {
                   child: Text(
                     "Supprimer",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: theme.colorScheme.onPrimary,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),

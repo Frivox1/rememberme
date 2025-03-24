@@ -10,8 +10,7 @@ class BirthdaysListScreen extends StatefulWidget {
 }
 
 class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
-  String _sortBy =
-      'Prochain anniversaire'; // Trier par défaut par ordre d'anniversaire proche
+  String _sortBy = 'Prochain anniversaire'; // Trier par défaut par date
 
   @override
   void initState() {
@@ -21,12 +20,11 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
     });
   }
 
-  /// Fonction pour calculer le nombre de jours restants avant un anniversaire
+  /// Calcul du nombre de jours restants avant un anniversaire
   int daysUntilNextBirthday(DateTime birthday) {
     DateTime now = DateTime.now();
     DateTime nextBirthday = DateTime(now.year, birthday.month, birthday.day);
 
-    // Si l'anniversaire est déjà passé cette année, prendre celui de l'année prochaine
     if (nextBirthday.isBefore(now)) {
       nextBirthday = DateTime(now.year + 1, birthday.month, birthday.day);
     }
@@ -36,29 +34,37 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // Récupère le thème actuel
+    final textTheme = theme.textTheme;
+
     return Scaffold(
-      backgroundColor: Color(0xFFFFE5EC),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           "Liste des Anniversaires",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style:
+              theme
+                  .appBarTheme
+                  .titleTextStyle, // Utilisation du style défini dans l'AppBarTheme
         ),
-        backgroundColor: Color(0xFFFF8FAB),
+        backgroundColor:
+            theme
+                .appBarTheme
+                .backgroundColor, // Vérifie que cette couleur est bien définie dans ton thème
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: theme.appBarTheme.iconTheme?.color,
+          ),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.sort, color: Colors.white),
+            icon: Icon(Icons.sort, color: theme.appBarTheme.iconTheme?.color),
             onSelected: (String newValue) {
               setState(() {
                 _sortBy = newValue;
@@ -84,7 +90,7 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
           builder: (context, birthdayProvider, child) {
             List<Birthday> birthdays = List.from(birthdayProvider.birthdays);
 
-            // Trier en fonction du mode sélectionné
+            // Trier selon l'option sélectionnée
             if (_sortBy == 'Prochain anniversaire') {
               birthdays.sort(
                 (a, b) => daysUntilNextBirthday(
@@ -101,7 +107,7 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
               return Center(
                 child: Text(
                   "Pas encore d'anniversaire ajouté",
-                  style: TextStyle(fontSize: 16),
+                  style: textTheme.bodyLarge, // Style du texte avec le thème
                 ),
               );
             }
@@ -118,6 +124,7 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
                   ),
                   margin: EdgeInsets.symmetric(vertical: 8),
                   elevation: 2,
+                  color: theme.cardColor, // Adapte la couleur de la carte
                   child: ListTile(
                     contentPadding: EdgeInsets.symmetric(
                       vertical: 12,
@@ -125,25 +132,26 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
                     ),
                     leading: Icon(
                       Icons.cake,
-                      color: Colors.pinkAccent,
+                      color: theme.colorScheme.secondary, // Couleur dynamique
                       size: 30,
                     ),
                     title: Text(
                       birthday.name,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
+                      style:
+                          textTheme.titleLarge, // Texte stylisé selon le thème
                     ),
                     subtitle: Text(
                       'Anniversaire le ${birthday.birthdayDate.day}/${birthday.birthdayDate.month} - Dans $daysLeft jours',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: theme.textTheme.bodyMedium?.color?.withOpacity(
+                          0.7,
+                        ),
+                      ),
                     ),
                     trailing: Icon(
                       Icons.arrow_forward_ios,
                       size: 16,
-                      color: Colors.grey[600],
+                      color: theme.iconTheme.color?.withOpacity(0.7),
                     ),
                     onTap: () {
                       Navigator.push(
