@@ -3,10 +3,18 @@ import 'package:rememberme/models/birthday_model.dart';
 import 'package:provider/provider.dart';
 import 'package:rememberme/providers/birthday_provider.dart';
 
-class BirthdayDetailsScreen extends StatelessWidget {
+class BirthdayDetailsScreen extends StatefulWidget {
   final Birthday birthday;
 
-  BirthdayDetailsScreen({required this.birthday});
+  const BirthdayDetailsScreen({Key? key, required this.birthday})
+    : super(key: key);
+
+  @override
+  _BirthdayDetailsScreenState createState() => _BirthdayDetailsScreenState();
+}
+
+class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
+  final TextEditingController _giftController = TextEditingController();
 
   String formatFrenchDate(DateTime date) {
     const List<String> months = [
@@ -23,35 +31,36 @@ class BirthdayDetailsScreen extends StatelessWidget {
       "novembre",
       "décembre",
     ];
-
     return "${date.day} ${months[date.month - 1]} ${date.year}";
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final int age = DateTime.now().year - birthday.birthdayDate.year;
+    final int age = DateTime.now().year - widget.birthday.birthdayDate.year;
 
     final DateTime nextBirthday =
         DateTime(
               DateTime.now().year,
-              birthday.birthdayDate.month,
-              birthday.birthdayDate.day,
+              widget.birthday.birthdayDate.month,
+              widget.birthday.birthdayDate.day,
             ).isBefore(DateTime.now())
             ? DateTime(
               DateTime.now().year + 1,
-              birthday.birthdayDate.month,
-              birthday.birthdayDate.day,
+              widget.birthday.birthdayDate.month,
+              widget.birthday.birthdayDate.day,
             )
             : DateTime(
               DateTime.now().year,
-              birthday.birthdayDate.month,
-              birthday.birthdayDate.day,
+              widget.birthday.birthdayDate.month,
+              widget.birthday.birthdayDate.day,
             );
     final int daysUntilNextBirthday =
         nextBirthday.difference(DateTime.now()).inDays + 1;
 
-    final String formattedBirthday = formatFrenchDate(birthday.birthdayDate);
+    final String formattedBirthday = formatFrenchDate(
+      widget.birthday.birthdayDate,
+    );
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -73,14 +82,40 @@ class BirthdayDetailsScreen extends StatelessWidget {
           },
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 40),
+            SizedBox(height: 20),
+
             Center(
-              child: Text(birthday.name, style: theme.textTheme.headlineMedium),
+              child: CircleAvatar(
+                radius: 80,
+                backgroundColor: theme.colorScheme.secondary.withOpacity(0.2),
+                backgroundImage:
+                    (widget.birthday.imagePath != null &&
+                            widget.birthday.imagePath!.isNotEmpty)
+                        ? Image.asset(widget.birthday.imagePath!).image
+                        : null,
+                child:
+                    (widget.birthday.imagePath == null ||
+                            widget.birthday.imagePath!.isEmpty)
+                        ? Icon(
+                          Icons.person,
+                          size: 60,
+                          color: theme.colorScheme.secondary,
+                        )
+                        : null,
+              ),
+            ),
+
+            SizedBox(height: 20),
+            Center(
+              child: Text(
+                widget.birthday.name,
+                style: theme.textTheme.headlineMedium,
+              ),
             ),
             SizedBox(height: 10),
             Center(
@@ -97,29 +132,91 @@ class BirthdayDetailsScreen extends StatelessWidget {
                 style: theme.textTheme.bodyLarge,
               ),
             ),
+
             SizedBox(height: 40),
             Text("Idées cadeaux :", style: theme.textTheme.titleLarge),
-            SizedBox(height: 10),
-            if (birthday.giftIdeas != null && birthday.giftIdeas!.isNotEmpty)
-              ...birthday.giftIdeas!.map(
-                (idea) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5.0),
+            if (widget.birthday.giftIdeas != null &&
+                widget.birthday.giftIdeas!.isNotEmpty)
+              ...widget.birthday.giftIdeas!.map((giftIdea) {
+                final index = widget.birthday.giftIdeas!.indexOf(giftIdea);
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Row(
                     children: [
                       Icon(
                         Icons.circle_outlined,
-                        color: theme.iconTheme.color,
-                        size: 16,
+                        color: theme.colorScheme.primary,
                       ),
-                      SizedBox(width: 12),
-                      Text(idea, style: theme.textTheme.bodyLarge),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(giftIdea, style: theme.textTheme.bodyLarge),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.remove_circle,
+                          color: theme.colorScheme.primary,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            widget.birthday.giftIdeas!.removeAt(index);
+                          });
+                          final provider = Provider.of<BirthdayProvider>(
+                            context,
+                            listen: false,
+                          );
+                          provider.updateGiftIdeas(
+                            widget.birthday.id,
+                            widget.birthday.giftIdeas!,
+                          );
+                        },
+                      ),
                     ],
                   ),
-                ),
-              )
+                );
+              }).toList()
             else
               Text("Pas d'idées cadeaux.", style: theme.textTheme.bodyLarge),
-            Spacer(),
+
+            SizedBox(height: 20),
+
+            // Ajouter une nouvelle idée cadeau avec "+" à côté
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _giftController,
+                    decoration: InputDecoration(
+                      labelText: 'Nouvelle idée cadeau',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.add, color: theme.colorScheme.primary),
+                  onPressed: () {
+                    final newGiftIdea = _giftController.text;
+                    if (newGiftIdea.isNotEmpty) {
+                      setState(() {
+                        widget.birthday.giftIdeas!.add(newGiftIdea);
+                      });
+                      final provider = Provider.of<BirthdayProvider>(
+                        context,
+                        listen: false,
+                      );
+                      provider.updateGiftIdeas(
+                        widget.birthday.id,
+                        widget.birthday.giftIdeas!,
+                      );
+                      _giftController.clear();
+                    }
+                  },
+                ),
+              ],
+            ),
+
+            SizedBox(height: 40),
+
+            // Bouton Supprimer
             Center(
               child: FractionallySizedBox(
                 widthFactor: 0.8,
@@ -137,7 +234,7 @@ class BirthdayDetailsScreen extends StatelessWidget {
                       listen: false,
                     );
 
-                    await provider.deleteBirthday(birthday.id);
+                    await provider.deleteBirthday(widget.birthday.id);
 
                     Navigator.pop(context);
                   },
@@ -152,6 +249,7 @@ class BirthdayDetailsScreen extends StatelessWidget {
                 ),
               ),
             ),
+
             SizedBox(height: 40),
           ],
         ),

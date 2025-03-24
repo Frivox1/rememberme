@@ -30,4 +30,24 @@ class BirthdayProvider with ChangeNotifier {
     await HiveService.updateBirthday(index, updatedBirthday);
     await loadBirthdays(); // Recharger les anniversaires après mise à jour
   }
+
+  // Mettre à jour les idées cadeaux d'un anniversaire
+  Future<void> updateGiftIdeas(String id, List<String> updatedGiftIdeas) async {
+    // On crée une nouvelle instance de Birthday avec les idées cadeaux mises à jour
+    final birthdayIndex = _birthdays.indexWhere((b) => b.id == id);
+    if (birthdayIndex != -1) {
+      var birthday = _birthdays[birthdayIndex];
+      var updatedBirthday = Birthday(
+        id: birthday.id,
+        name: birthday.name,
+        birthdayDate: birthday.birthdayDate,
+        giftIdeas: updatedGiftIdeas,
+        imagePath: birthday.imagePath,
+      );
+
+      // Mettez à jour la liste des anniversaires dans Hive
+      await HiveService.updateBirthday(birthdayIndex, updatedBirthday);
+      await loadBirthdays(); // Recharger les anniversaires après mise à jour des idées cadeaux
+    }
+  }
 }

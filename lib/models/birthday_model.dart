@@ -1,6 +1,6 @@
 import 'package:hive_ce/hive.dart';
 
-part 'birthday_model.g.dart'; // Si vous utilisez Hive généré
+part 'birthday_model.g.dart';
 
 @HiveType(typeId: 0)
 class Birthday {
@@ -14,12 +14,16 @@ class Birthday {
   final DateTime birthdayDate;
 
   @HiveField(3)
-  final List<String>? giftIdeas;
+  List<String>? giftIdeas;
+
+  @HiveField(4)
+  final String? imagePath;
 
   Birthday({
     required this.id,
     required this.name,
     required this.birthdayDate,
     this.giftIdeas,
+    this.imagePath,
   });
 }

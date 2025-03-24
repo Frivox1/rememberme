@@ -4,18 +4,16 @@ import 'home_screen.dart';
 class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.pink[200],
+        backgroundColor: theme.appBarTheme.backgroundColor,
         title: const Text(
           'RememberMe',
-          style: TextStyle(
-            fontSize: 30,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: theme.iconTheme.color),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -31,20 +29,20 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 40),
-            const Text(
+            Text(
               'N\'oubliez plus jamais les anniversaires !',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: theme.textTheme.titleLarge?.color ?? Colors.black87,
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
+            Text(
               'RememberMe vous aide à suivre les anniversaires afin de ne jamais manquer un jour spécial !',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.textTheme.bodyLarge?.color ?? Colors.grey,
+              ),
             ),
             const SizedBox(height: 40),
             ElevatedButton(
@@ -56,15 +54,13 @@ class WelcomeScreen extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink,
+                backgroundColor: theme.colorScheme.primary,
                 padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
               ),
-              child: const Text(
+              child: Text(
                 'C\'est parti !',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: theme.colorScheme.onPrimary,
                 ),
               ),
             ),

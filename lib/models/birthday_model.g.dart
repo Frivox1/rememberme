@@ -21,13 +21,14 @@ class BirthdayAdapter extends TypeAdapter<Birthday> {
       name: fields[1] as String,
       birthdayDate: fields[2] as DateTime,
       giftIdeas: (fields[3] as List?)?.cast<String>(),
+      imagePath: fields[4] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Birthday obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class BirthdayAdapter extends TypeAdapter<Birthday> {
       ..writeByte(2)
       ..write(obj.birthdayDate)
       ..writeByte(3)
-      ..write(obj.giftIdeas);
+      ..write(obj.giftIdeas)
+      ..writeByte(4)
+      ..write(obj.imagePath);
   }
 
   @override

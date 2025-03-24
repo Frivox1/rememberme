@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rememberme/models/birthday_model.dart';
@@ -42,15 +43,9 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
       appBar: AppBar(
         title: Text(
           "Liste des Anniversaires",
-          style:
-              theme
-                  .appBarTheme
-                  .titleTextStyle, // Utilisation du style défini dans l'AppBarTheme
+          style: theme.appBarTheme.titleTextStyle,
         ),
-        backgroundColor:
-            theme
-                .appBarTheme
-                .backgroundColor, // Vérifie que cette couleur est bien définie dans ton thème
+        backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
@@ -107,7 +102,7 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
               return Center(
                 child: Text(
                   "Pas encore d'anniversaire ajouté",
-                  style: textTheme.bodyLarge, // Style du texte avec le thème
+                  style: textTheme.bodyLarge,
                 ),
               );
             }
@@ -124,22 +119,29 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
                   ),
                   margin: EdgeInsets.symmetric(vertical: 8),
                   elevation: 2,
-                  color: theme.cardColor, // Adapte la couleur de la carte
+                  color: theme.cardColor,
                   child: ListTile(
                     contentPadding: EdgeInsets.symmetric(
                       vertical: 12,
                       horizontal: 12,
                     ),
-                    leading: Icon(
-                      Icons.cake,
-                      color: theme.colorScheme.secondary, // Couleur dynamique
-                      size: 30,
-                    ),
-                    title: Text(
-                      birthday.name,
-                      style:
-                          textTheme.titleLarge, // Texte stylisé selon le thème
-                    ),
+                    leading:
+                        birthday.imagePath != null
+                            ? ClipRRect(
+                              borderRadius: BorderRadius.circular(50),
+                              child: Image.file(
+                                File(birthday.imagePath!),
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                            : Icon(
+                              Icons.cake,
+                              color: theme.colorScheme.secondary,
+                              size: 30,
+                            ),
+                    title: Text(birthday.name, style: textTheme.titleLarge),
                     subtitle: Text(
                       'Anniversaire le ${birthday.birthdayDate.day}/${birthday.birthdayDate.month} - ${daysLeft == 1 ? "Demain" : "Dans $daysLeft jours"}',
                       style: textTheme.bodyMedium?.copyWith(

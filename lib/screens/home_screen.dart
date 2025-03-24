@@ -174,7 +174,6 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             SizedBox(height: 22),
 
-            // Si c'est l'anniversaire de plusieurs personnes aujourd'hui
             if (birthdaysByDate.containsKey(DateTime(0, now.month, now.day)))
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -184,9 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         birthday,
                       ) {
                         return Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: 16.0,
-                          ), // Ajoute de l'espace entre les cartes
+                          padding: const EdgeInsets.only(bottom: 16.0),
                           child: Container(
                             decoration: BoxDecoration(
                               color: theme.cardColor,
@@ -203,9 +200,31 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  // Titre de l'anniversaire avec le nom coloré
+                                  CircleAvatar(
+                                    radius: 75,
+                                    backgroundColor: theme.colorScheme.secondary
+                                        .withOpacity(0.2),
+                                    backgroundImage:
+                                        (birthday.imagePath != null &&
+                                                birthday.imagePath!.isNotEmpty)
+                                            ? Image.asset(
+                                              birthday.imagePath!,
+                                            ).image
+                                            : null,
+                                    child:
+                                        (birthday.imagePath == null ||
+                                                birthday.imagePath!.isEmpty)
+                                            ? Icon(
+                                              Icons.person,
+                                              size: 50,
+                                              color:
+                                                  theme.colorScheme.secondary,
+                                            )
+                                            : null,
+                                  ),
+                                  SizedBox(height: 16),
                                   Text.rich(
                                     TextSpan(
                                       children: [
@@ -214,12 +233,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                           style: theme.textTheme.titleLarge
                                               ?.copyWith(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 18,
+                                                fontSize: 20,
                                                 color:
                                                     theme
                                                         .textTheme
                                                         .titleLarge
-                                                        ?.color, // Couleur existante
+                                                        ?.color,
                                               ),
                                         ),
                                         TextSpan(
@@ -227,37 +246,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                           style: theme.textTheme.titleLarge
                                               ?.copyWith(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 18,
+                                                fontSize: 20,
                                                 color:
-                                                    theme
-                                                        .colorScheme
-                                                        .secondary, // Couleur secondaire pour le nom
+                                                    theme.colorScheme.secondary,
                                               ),
                                         ),
                                         TextSpan(
-                                          text:
-                                              "aujourd'hui ! N'oublie pas de lui souhaiter ! 🎂",
+                                          text: "\naujourd'hui ! 🎂",
                                           style: theme.textTheme.titleLarge
                                               ?.copyWith(
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 18,
+                                                fontSize: 20,
                                                 color:
                                                     theme
                                                         .textTheme
                                                         .titleLarge
-                                                        ?.color, // Couleur existante pour le reste
+                                                        ?.color,
                                               ),
                                         ),
                                       ],
                                     ),
+                                    textAlign: TextAlign.center,
                                   ),
-                                  SizedBox(height: 26),
+                                  SizedBox(height: 16),
                                   Row(
                                     children: [
                                       Expanded(
                                         child: ElevatedButton.icon(
                                           onPressed: () {
-                                            // Naviguer vers l'écran des détails
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -291,7 +307,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       Expanded(
                                         child: ElevatedButton.icon(
                                           onPressed: () {
-                                            // ouvrir l'application message
                                             _openSMSApp();
                                           },
                                           icon: Icon(
@@ -394,27 +409,55 @@ class _HomeScreenState extends State<HomeScreen> {
                                   horizontal: 16.0,
                                 ),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          birthday.name,
-                                          style: theme.textTheme.headlineMedium,
-                                        ),
-                                        SizedBox(height: 6),
-                                        Text(
-                                          daysRemaining == 1
-                                              ? '$age ans demain'
-                                              : '$age ans dans $daysRemaining jours',
-                                          style: theme.textTheme.titleMedium,
-                                        ),
-                                      ],
+                                    CircleAvatar(
+                                      radius: 45,
+                                      backgroundColor: theme
+                                          .colorScheme
+                                          .secondary
+                                          .withOpacity(0.2),
+                                      backgroundImage:
+                                          (birthday.imagePath != null &&
+                                                  birthday
+                                                      .imagePath!
+                                                      .isNotEmpty)
+                                              ? Image.asset(
+                                                birthday.imagePath!,
+                                              ).image
+                                              : null,
+                                      child:
+                                          (birthday.imagePath == null ||
+                                                  birthday.imagePath!.isEmpty)
+                                              ? Icon(
+                                                Icons.person,
+                                                size: 30,
+                                                color:
+                                                    theme.colorScheme.secondary,
+                                              )
+                                              : null,
+                                    ),
+                                    SizedBox(width: 20),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            birthday.name,
+                                            style:
+                                                theme.textTheme.headlineMedium,
+                                          ),
+                                          SizedBox(height: 6),
+                                          Text(
+                                            daysRemaining == 1
+                                                ? '$age ans demain'
+                                                : '$age ans dans $daysRemaining jours',
+                                            style: theme.textTheme.titleMedium,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                     Icon(
                                       Icons.arrow_forward_ios,

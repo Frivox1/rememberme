@@ -38,6 +38,20 @@ class HiveService {
     await box.putAt(index, updatedBirthday);
   }
 
+  // Mettre à jour les idées cadeaux d'un anniversaire
+  static Future<void> updateGiftIdeas(
+    String id,
+    List<String> updatedGiftIdeas,
+  ) async {
+    var box = await openBirthdayBox();
+    final index = box.values.toList().indexWhere((b) => b.id == id);
+    if (index != -1) {
+      var birthday = box.getAt(index) as Birthday;
+      birthday.giftIdeas = updatedGiftIdeas;
+      await box.putAt(index, birthday); // Sauvegarder l'anniversaire mis à jour
+    }
+  }
+
   // Vérifier si la boîte est ouverte (facultatif, utile pour le debug)
   static Future<bool> isBirthdayBoxOpen() async {
     var box = await openBirthdayBox();
