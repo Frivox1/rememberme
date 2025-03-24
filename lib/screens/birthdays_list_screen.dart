@@ -116,7 +116,7 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
               itemCount: birthdays.length,
               itemBuilder: (context, index) {
                 final birthday = birthdays[index];
-                int daysLeft = daysUntilNextBirthday(birthday.birthdayDate);
+                int daysLeft = daysUntilNextBirthday(birthday.birthdayDate) + 1;
 
                 return Card(
                   shape: RoundedRectangleBorder(
@@ -141,7 +141,7 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
                           textTheme.titleLarge, // Texte stylisé selon le thème
                     ),
                     subtitle: Text(
-                      'Anniversaire le ${birthday.birthdayDate.day}/${birthday.birthdayDate.month} - Dans $daysLeft jours',
+                      'Anniversaire le ${birthday.birthdayDate.day}/${birthday.birthdayDate.month} - ${daysLeft == 1 ? "Demain" : "Dans $daysLeft jours"}',
                       style: textTheme.bodyMedium?.copyWith(
                         color: theme.textTheme.bodyMedium?.color?.withOpacity(
                           0.7,

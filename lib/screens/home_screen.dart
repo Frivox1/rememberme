@@ -5,6 +5,7 @@ import 'package:rememberme/screens/birthdays_list_screen.dart';
 import 'package:rememberme/providers/birthday_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'details_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -131,11 +132,10 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(color: theme.colorScheme.primary),
               child: Text(
                 'Menu',
                 style: theme.textTheme.headlineMedium?.copyWith(
-                  color: theme.colorScheme.onPrimary, // Contraste avec le fond
+                  color: theme.colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -158,105 +158,237 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 22),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Prochains anniversaires",
-                style: theme.textTheme.titleLarge,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 22),
+
+            // Si c'est l'anniversaire de quelqu'un aujourd'hui
+            if (birthdaysByDate.containsKey(DateTime(0, now.month, now.day)))
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 2,
+                        blurRadius: 2,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Titre de l'anniversaire
+                        Text(
+                          "C'est l'anniversaire de ${birthdaysByDate[DateTime(0, now.month, now.day)]![0].name} aujourd'hui ! N'oublie pas de lui souhaiter ! 🎂",
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        SizedBox(height: 26),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  // Naviguer vers l'écran des détails
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => BirthdayDetailsScreen(
+                                            birthday:
+                                                birthdaysByDate[DateTime(
+                                                  0,
+                                                  now.month,
+                                                  now.day,
+                                                )]![0],
+                                          ),
+                                    ),
+                                  );
+                                },
+                                icon: Icon(Icons.info_outline),
+                                label: Text("Details"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: theme.colorScheme.onPrimary,
+                                  foregroundColor: theme.colorScheme.primary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  // ouvrir l'application message
+                                },
+                                icon: Icon(
+                                  Icons.message_outlined,
+                                  color: Colors.white,
+                                ),
+                                label: Text(
+                                  "Message",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: theme.colorScheme.secondary,
+
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Prochains anniversaires",
+                  style: theme.textTheme.titleLarge,
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 150,
-            child:
-                limitedUpcomingBirthdays.isEmpty
-                    ? Center(
-                      child: Text(
-                        "Aucun anniversaire à venir",
-                        style: theme.textTheme.bodyLarge,
-                      ),
-                    )
-                    : PageView.builder(
-                      controller: _pageController,
-                      itemCount: limitedUpcomingBirthdays.length,
-                      itemBuilder: (context, index) {
-                        Birthday birthday = limitedUpcomingBirthdays[index];
-                        int age = calculateAge(birthday.birthdayDate) + 1;
-                        int daysRemaining =
-                            daysUntilNextBirthday(birthday.birthdayDate) + 1;
+            SizedBox(
+              height: 150,
+              child:
+                  limitedUpcomingBirthdays.isEmpty
+                      ? Center(
+                        child: Text(
+                          "Aucun anniversaire à venir",
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                      )
+                      : PageView.builder(
+                        controller: _pageController,
+                        itemCount: limitedUpcomingBirthdays.length,
+                        itemBuilder: (context, index) {
+                          Birthday birthday = limitedUpcomingBirthdays[index];
+                          int age = calculateAge(birthday.birthdayDate) + 1;
+                          int daysRemaining =
+                              daysUntilNextBirthday(birthday.birthdayDate) + 1;
 
-                        return Container(
-                          margin: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: theme.cardColor,
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: [
-                              BoxShadow(
-                                color: theme.shadowColor.withOpacity(0.2),
-                                spreadRadius: 1,
-                                blurRadius: 3,
-                                offset: Offset(0, 2),
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => BirthdayDetailsScreen(
+                                        birthday: birthday,
+                                      ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              margin: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
                               ),
-                            ],
-                          ),
-                          height: 100,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 8.0,
-                              horizontal: 16.0,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  birthday.name,
-                                  style: theme.textTheme.headlineMedium,
+                              decoration: BoxDecoration(
+                                color: theme.cardColor,
+                                borderRadius: BorderRadius.circular(24),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    spreadRadius: 2,
+                                    blurRadius: 2,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              height: 100,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                  horizontal: 16.0,
                                 ),
-                                SizedBox(height: 6),
-                                Text(
-                                  '$age ans dans $daysRemaining jours',
-                                  style: theme.textTheme.titleMedium,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          birthday.name,
+                                          style: theme.textTheme.headlineMedium,
+                                        ),
+                                        SizedBox(height: 6),
+                                        Text(
+                                          daysRemaining == 1
+                                              ? '$age ans demain'
+                                              : '$age ans dans $daysRemaining jours',
+                                          style: theme.textTheme.titleMedium,
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: theme.iconTheme.color,
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  limitedUpcomingBirthdays.length,
+                  (index) => Container(
+                    margin: EdgeInsets.symmetric(horizontal: 4),
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color:
+                          _currentPageIndex == index
+                              ? theme.colorScheme.secondary
+                              : theme.colorScheme.secondary.withOpacity(0.4),
                     ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                limitedUpcomingBirthdays.length,
-                (index) => Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4),
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color:
-                        _currentPageIndex == index
-                            ? theme.colorScheme.secondary
-                            : theme.colorScheme.secondary.withOpacity(0.4),
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(height: 24),
-          Expanded(
-            child: Padding(
+            SizedBox(height: 24),
+            Padding(
               padding: const EdgeInsets.all(16.0),
               child: TableCalendar(
                 firstDay: DateTime.utc(now.year - 1, 1, 1),
@@ -348,8 +480,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-          ),
-        ],
+            SizedBox(height: 60),
+          ],
+        ),
       ),
     );
   }

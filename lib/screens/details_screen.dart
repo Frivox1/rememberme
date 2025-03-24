@@ -49,7 +49,7 @@ class BirthdayDetailsScreen extends StatelessWidget {
               birthday.birthdayDate.day,
             );
     final int daysUntilNextBirthday =
-        nextBirthday.difference(DateTime.now()).inDays;
+        nextBirthday.difference(DateTime.now()).inDays + 1;
 
     final String formattedBirthday = formatFrenchDate(birthday.birthdayDate);
 
@@ -89,7 +89,11 @@ class BirthdayDetailsScreen extends StatelessWidget {
             SizedBox(height: 10),
             Center(
               child: Text(
-                "$age ans dans $daysUntilNextBirthday jours",
+                daysUntilNextBirthday == 365
+                    ? "$age ans aujourd'hui !"
+                    : daysUntilNextBirthday == 1
+                    ? '$age ans demain'
+                    : '$age ans dans $daysUntilNextBirthday jours',
                 style: theme.textTheme.bodyLarge,
               ),
             ),
