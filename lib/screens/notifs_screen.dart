@@ -28,8 +28,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Future<void> _showNotification() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-          'your_channel_id',
-          'your_channel_name',
+          'rememberme_birthday_channel',
+          'Rappels d\'anniversaires',
           importance: Importance.max,
           priority: Priority.high,
         );
