@@ -7,8 +7,14 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'details_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'notifs_screen.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class HomeScreen extends StatefulWidget {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+  HomeScreen({required this.flutterLocalNotificationsPlugin});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -162,6 +168,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => BirthdaysListScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.notifications_outlined,
+                color: theme.iconTheme.color,
+              ),
+              title: Text('Notifications', style: theme.textTheme.bodyLarge),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => NotificationScreen(
+                          flutterLocalNotificationsPlugin:
+                              widget.flutterLocalNotificationsPlugin,
+                        ),
                   ),
                 );
               },

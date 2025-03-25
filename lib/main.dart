@@ -7,6 +7,10 @@ import 'package:rememberme/providers/birthday_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,10 +25,34 @@ void main() async {
     await HiveService.openBirthdayBox();
   }
 
+  // Initialisation des notifications locales
+  await initNotifications();
+
   // Vérification si c'est la première fois que l'utilisateur ouvre l'app
   bool isFirstTime = await checkFirstTime();
 
-  runApp(MyApp(isFirstTime: isFirstTime));
+  runApp(
+    MyApp(
+      isFirstTime: isFirstTime,
+      flutterLocalNotificationsPlugin: flutterLocalNotificationsPlugin,
+    ),
+  );
+}
+
+Future<void> initNotifications() async {
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  const DarwinInitializationSettings initializationSettingsIOS =
+      DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+      );
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsIOS,
+  );
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 }
 
 // Fonction qui vérifie si l'application est lancée pour la première fois
@@ -41,8 +69,12 @@ Future<bool> checkFirstTime() async {
 
 class MyApp extends StatelessWidget {
   final bool isFirstTime;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  MyApp({required this.isFirstTime});
+  MyApp({
+    required this.isFirstTime,
+    required this.flutterLocalNotificationsPlugin,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +95,16 @@ class MyApp extends StatelessWidget {
                 systemBrightness == Brightness.dark
                     ? ThemeMode.dark
                     : ThemeMode.light,
-            home: isFirstTime ? WelcomeScreen() : HomeScreen(),
+            home:
+                isFirstTime
+                    ? WelcomeScreen(
+                      flutterLocalNotificationsPlugin:
+                          flutterLocalNotificationsPlugin,
+                    )
+                    : HomeScreen(
+                      flutterLocalNotificationsPlugin:
+                          flutterLocalNotificationsPlugin,
+                    ),
           );
         },
       ),

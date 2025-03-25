@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'home_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+  WelcomeScreen({required this.flutterLocalNotificationsPlugin});
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -50,7 +55,13 @@ class WelcomeScreen extends StatelessWidget {
                 // Naviguer vers la page d'accueil
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                  MaterialPageRoute(
+                    builder:
+                        (context) => HomeScreen(
+                          flutterLocalNotificationsPlugin:
+                              flutterLocalNotificationsPlugin,
+                        ),
+                  ),
                 );
               },
               style: ElevatedButton.styleFrom(
