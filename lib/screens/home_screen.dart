@@ -9,6 +9,7 @@ import 'details_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'notifs_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:rememberme/services/hive_service.dart';
 
 class HomeScreen extends StatefulWidget {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -186,6 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         (context) => NotificationScreen(
                           flutterLocalNotificationsPlugin:
                               widget.flutterLocalNotificationsPlugin,
+                          hiveService: HiveService(),
                         ),
                   ),
                 );

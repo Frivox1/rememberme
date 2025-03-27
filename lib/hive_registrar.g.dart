@@ -4,9 +4,11 @@
 
 import 'package:hive_ce/hive.dart';
 import 'package:rememberme/models/birthday_model.dart';
+import 'package:rememberme/models/reminder_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(BirthdayAdapter());
+    registerAdapter(ReminderAdapter());
   }
 }

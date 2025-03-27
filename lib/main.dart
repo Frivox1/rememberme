@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:rememberme/models/birthday_model.dart';
+import 'package:rememberme/models/reminder_model.dart';
 import 'package:rememberme/screens/home_screen.dart';
 import 'package:rememberme/screens/welcome_screen.dart';
-import 'package:rememberme/services/hive_service.dart';
 import 'package:rememberme/providers/birthday_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -15,15 +17,17 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialisation de la librairie timezone
+  tz.initializeTimeZones();
+  tz.setLocalLocation(tz.getLocation('Europe/Paris'));
+
   // Initialisation de Hive
   await Hive.initFlutter();
   Hive.registerAdapter(BirthdayAdapter());
+  Hive.registerAdapter(ReminderAdapter());
 
-  // Vérification et ouverture de la boîte Hive
-  bool isBoxOpen = await HiveService.isBirthdayBoxOpen();
-  if (!isBoxOpen) {
-    await HiveService.openBirthdayBox();
-  }
+  await Hive.openBox<Birthday>('birthdays');
+  await Hive.openBox<Reminder>('reminders');
 
   // Initialisation des notifications locales
   await initNotifications();
