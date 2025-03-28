@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'notifs_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rememberme/services/hive_service.dart';
+import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -190,6 +191,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           hiveService: HiveService(),
                         ),
                   ),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.settings_outlined,
+                color: theme.iconTheme.color,
+              ),
+              title: Text('Réglages', style: theme.textTheme.bodyLarge),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsScreen()),
                 );
               },
             ),

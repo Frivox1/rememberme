@@ -10,6 +10,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:rememberme/providers/theme_provider.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -36,9 +37,12 @@ void main() async {
   bool isFirstTime = await checkFirstTime();
 
   runApp(
-    MyApp(
-      isFirstTime: isFirstTime,
-      flutterLocalNotificationsPlugin: flutterLocalNotificationsPlugin,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => BirthdayProvider()),
+      ],
+      child: MyApp(isFirstTime: isFirstTime),
     ),
   );
 }
@@ -73,45 +77,31 @@ Future<bool> checkFirstTime() async {
 
 class MyApp extends StatelessWidget {
   final bool isFirstTime;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  MyApp({
-    required this.isFirstTime,
-    required this.flutterLocalNotificationsPlugin,
-  });
+  MyApp({required this.isFirstTime});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => BirthdayProvider(),
-      child: Builder(
-        builder: (context) {
-          // Détecte le thème du téléphone (clair ou sombre)
-          final Brightness systemBrightness =
-              MediaQuery.of(context).platformBrightness;
-
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'RememberMe',
-            theme: lightTheme,
-            darkTheme: darkTheme,
-            themeMode:
-                systemBrightness == Brightness.dark
-                    ? ThemeMode.dark
-                    : ThemeMode.light,
-            home:
-                isFirstTime
-                    ? WelcomeScreen(
-                      flutterLocalNotificationsPlugin:
-                          flutterLocalNotificationsPlugin,
-                    )
-                    : HomeScreen(
-                      flutterLocalNotificationsPlugin:
-                          flutterLocalNotificationsPlugin,
-                    ),
-          );
-        },
-      ),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'RememberMe',
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: themeProvider.themeMode,
+          home:
+              isFirstTime
+                  ? WelcomeScreen(
+                    flutterLocalNotificationsPlugin:
+                        flutterLocalNotificationsPlugin,
+                  )
+                  : HomeScreen(
+                    flutterLocalNotificationsPlugin:
+                        flutterLocalNotificationsPlugin,
+                  ),
+        );
+      },
     );
   }
 }
