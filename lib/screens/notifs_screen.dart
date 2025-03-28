@@ -45,16 +45,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ?.requestNotificationsPermission();
   }
 
-  Future<void> _pickTime(BuildContext context) async {
-    final pickedTime = await showTimePicker(
-      context: context,
-      initialTime: _selectedTime,
-    );
-    if (pickedTime != null) {
-      setState(() => _selectedTime = pickedTime);
-    }
-  }
-
   bool _reminderExists(Reminder newReminder) {
     return _remindersBox.values.any(
       (reminder) =>
@@ -118,10 +108,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
     Birthday birthday,
     Reminder reminder,
   ) async {
-    final now = DateTime.now();
-    print('🕒 Maintenant : $now');
-    print('🎂 Anniversaire de ${birthday.name} : ${birthday.birthdayDate}');
-
     // Trouver la prochaine occurrence de l'anniversaire
     final nextBirthday = getNextOccurrence(birthday.birthdayDate);
 
@@ -141,13 +127,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
     final scheduledDate = tz.TZDateTime.from(notificationTime, tz.local);
 
     print(
-      '✅ Programmation de notification pour ${birthday.name} le $scheduledDate, ${reminder.daysBefore} jours avant',
+      'Programmation de notification pour ${birthday.name} le $scheduledDate, ${reminder.daysBefore} jours avant',
     );
 
     await widget.flutterLocalNotificationsPlugin.zonedSchedule(
       birthday.hashCode + reminder.hashCode,
       '🎉 Anniversaire de ${birthday.name}',
-      'Dans ${reminder.daysBefore} jours',
+      reminder.daysBefore == 0
+          ? "Aujourd'hui"
+          : reminder.daysBefore == 1
+          ? "Demain"
+          : "Dans ${reminder.daysBefore} jours",
       scheduledDate,
       NotificationDetails(
         android: AndroidNotificationDetails(
@@ -173,6 +163,76 @@ class _NotificationScreenState extends State<NotificationScreen> {
     await _scheduleAllNotifications();
   }
 
+  void _openReminderDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: const Text('Ajouter un rappel'),
+              content: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Jours avant l\'événement',
+                        suffixText: 'jours (0-30)',
+                      ),
+                      validator: (value) {
+                        final val = int.tryParse(value ?? '');
+                        if (val == null || val < 0 || val > 30) {
+                          return 'Valeur entre 0 et 30';
+                        }
+                        return null;
+                      },
+                      onChanged:
+                          (value) => _daysBefore = int.tryParse(value) ?? 0,
+                    ),
+                    const SizedBox(height: 16),
+                    ListTile(
+                      title: const Text('Heure de notification'),
+                      subtitle: Text(_selectedTime.format(context)),
+                      trailing: const Icon(Icons.access_time),
+                      onTap: () async {
+                        final pickedTime = await showTimePicker(
+                          context: context,
+                          initialTime: _selectedTime,
+                        );
+                        if (pickedTime != null) {
+                          setState(() => _selectedTime = pickedTime);
+                          setStateDialog(() {});
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Annuler'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    await _saveReminder();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Enregistrer'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -180,74 +240,85 @@ class _NotificationScreenState extends State<NotificationScreen> {
         title: const Text('Gestion des rappels'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notification_add),
-            onPressed: _scheduleAllNotifications,
+            icon: const Icon(Icons.notification_add, size: 26),
+            onPressed: _openReminderDialog,
           ),
         ],
       ),
       body: Column(
         children: [
-          _buildReminderForm(),
-          const Divider(),
-          Expanded(child: _buildRemindersList()),
+          SizedBox(height: 40),
+          Expanded(child: _buildRemindersList(context)),
         ],
       ),
     );
   }
 
-  Widget _buildReminderForm() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Jours avant l\'événement',
-                suffixText: 'jours (0-30)',
-              ),
-              validator: (value) {
-                final val = int.tryParse(value ?? '');
-                if (val == null || val < 0 || val > 30) {
-                  return 'Valeur entre 0 et 30';
-                }
-                return null;
-              },
-              onChanged: (value) => _daysBefore = int.tryParse(value) ?? 0,
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              title: const Text('Heure de notification'),
-              subtitle: Text(_selectedTime.format(context)),
-              trailing: const Icon(Icons.access_time),
-              onTap: () => _pickTime(context),
-            ),
-            ElevatedButton(
-              onPressed: _saveReminder,
-              child: const Text('Ajouter un rappel'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRemindersList() {
+  Widget _buildRemindersList(BuildContext context) {
+    final theme = Theme.of(context);
     return ValueListenableBuilder(
       valueListenable: _remindersBox.listenable(),
       builder: (context, Box<Reminder> box, _) {
+        if (box.isEmpty) {
+          return Center(
+            child: Text(
+              'Aucun rappel ajouté',
+              style: theme.textTheme.bodyLarge,
+            ),
+          );
+        }
+
+        // Convertir en liste et trier par daysBefore (ordre croissant)
+        final sortedReminders =
+            box.values.toList()
+              ..sort((a, b) => a.daysBefore.compareTo(b.daysBefore));
+
         return ListView.builder(
-          itemCount: box.length,
+          padding: const EdgeInsets.all(16),
+          itemCount: sortedReminders.length,
           itemBuilder: (context, index) {
-            final reminder = box.getAt(index)!;
-            return ListTile(
-              title: Text('${reminder.daysBefore} jours avant'),
-              subtitle: Text('À ${reminder.time.format(context)}'),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () => _deleteReminder(index),
+            final reminder = sortedReminders[index];
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              decoration: BoxDecoration(
+                color: theme.cardColor,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        reminder.daysBefore == 0
+                            ? 'Le jour de l\'anniversaire'
+                            : reminder.daysBefore == 1
+                            ? 'Le jour avant'
+                            : '${reminder.daysBefore} jours avant',
+                        style: theme.textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        '⏰ À ${reminder.time.format(context)}',
+                        style: theme.textTheme.titleMedium,
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => _deleteReminder(index),
+                  ),
+                ],
               ),
             );
           },
