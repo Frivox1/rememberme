@@ -21,8 +21,9 @@ class BirthdayProvider with ChangeNotifier {
 
   // Supprimer un anniversaire en utilisant l'ID
   Future<void> deleteBirthday(String id) async {
-    await HiveService.deleteBirthdayById(id); // Supprimer via l'ID
-    await loadBirthdays(); // Recharger les anniversaires après suppression
+    print('🧨 Suppression demandée pour ID: $id');
+    await HiveService.deleteBirthdayById(id);
+    await loadBirthdays();
   }
 
   // Mettre à jour un anniversaire

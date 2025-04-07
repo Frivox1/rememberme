@@ -120,6 +120,7 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
 
               // Champ Nom
               TextField(
+                maxLength: 24,
                 controller: _nameController,
                 cursorColor: theme.colorScheme.primary,
                 decoration: InputDecoration(

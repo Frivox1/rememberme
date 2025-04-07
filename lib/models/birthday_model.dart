@@ -26,4 +26,20 @@ class Birthday {
     this.giftIdeas,
     this.imagePath,
   });
+
+  Birthday copyWith({
+    String? id,
+    String? name,
+    DateTime? birthdayDate,
+    List<String>? giftIdeas,
+    String? imagePath,
+  }) {
+    return Birthday(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      birthdayDate: birthdayDate ?? this.birthdayDate,
+      giftIdeas: giftIdeas ?? List<String>.from(this.giftIdeas ?? []),
+      imagePath: imagePath ?? this.imagePath,
+    );
+  }
 }

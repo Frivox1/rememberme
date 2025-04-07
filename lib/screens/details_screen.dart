@@ -15,6 +15,13 @@ class BirthdayDetailsScreen extends StatefulWidget {
 
 class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
   final TextEditingController _giftController = TextEditingController();
+  late Birthday _birthday;
+
+  @override
+  void initState() {
+    super.initState();
+    _birthday = widget.birthday.copyWith(); // Copie locale
+  }
 
   String formatFrenchDate(DateTime date) {
     const List<String> months = [
@@ -37,30 +44,29 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final int age = DateTime.now().year - widget.birthday.birthdayDate.year;
+    final int age = DateTime.now().year - _birthday.birthdayDate.year;
 
     final DateTime nextBirthday =
         DateTime(
               DateTime.now().year,
-              widget.birthday.birthdayDate.month,
-              widget.birthday.birthdayDate.day,
+              _birthday.birthdayDate.month,
+              _birthday.birthdayDate.day,
             ).isBefore(DateTime.now())
             ? DateTime(
               DateTime.now().year + 1,
-              widget.birthday.birthdayDate.month,
-              widget.birthday.birthdayDate.day,
+              _birthday.birthdayDate.month,
+              _birthday.birthdayDate.day,
             )
             : DateTime(
               DateTime.now().year,
-              widget.birthday.birthdayDate.month,
-              widget.birthday.birthdayDate.day,
+              _birthday.birthdayDate.month,
+              _birthday.birthdayDate.day,
             );
+
     final int daysUntilNextBirthday =
         nextBirthday.difference(DateTime.now()).inDays + 1;
 
-    final String formattedBirthday = formatFrenchDate(
-      widget.birthday.birthdayDate,
-    );
+    final String formattedBirthday = formatFrenchDate(_birthday.birthdayDate);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -88,19 +94,18 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 20),
-
             Center(
               child: CircleAvatar(
                 radius: 80,
                 backgroundColor: theme.colorScheme.secondary.withOpacity(0.2),
                 backgroundImage:
-                    (widget.birthday.imagePath != null &&
-                            widget.birthday.imagePath!.isNotEmpty)
-                        ? Image.asset(widget.birthday.imagePath!).image
+                    (_birthday.imagePath != null &&
+                            _birthday.imagePath!.isNotEmpty)
+                        ? Image.asset(_birthday.imagePath!).image
                         : null,
                 child:
-                    (widget.birthday.imagePath == null ||
-                            widget.birthday.imagePath!.isEmpty)
+                    (_birthday.imagePath == null ||
+                            _birthday.imagePath!.isEmpty)
                         ? Icon(
                           Icons.person,
                           size: 60,
@@ -109,11 +114,10 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                         : null,
               ),
             ),
-
             SizedBox(height: 20),
             Center(
               child: Text(
-                widget.birthday.name,
+                _birthday.name,
                 style: theme.textTheme.headlineMedium,
               ),
             ),
@@ -132,13 +136,12 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                 style: theme.textTheme.bodyLarge,
               ),
             ),
-
             SizedBox(height: 40),
             Text("Idées cadeaux :", style: theme.textTheme.titleLarge),
-            if (widget.birthday.giftIdeas != null &&
-                widget.birthday.giftIdeas!.isNotEmpty)
-              ...widget.birthday.giftIdeas!.map((giftIdea) {
-                final index = widget.birthday.giftIdeas!.indexOf(giftIdea);
+            if (_birthday.giftIdeas != null && _birthday.giftIdeas!.isNotEmpty)
+              ..._birthday.giftIdeas!.asMap().entries.map((entry) {
+                final index = entry.key;
+                final giftIdea = entry.value;
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Row(
@@ -158,15 +161,15 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                         ),
                         onPressed: () {
                           setState(() {
-                            widget.birthday.giftIdeas!.removeAt(index);
+                            _birthday.giftIdeas!.removeAt(index);
                           });
                           final provider = Provider.of<BirthdayProvider>(
                             context,
                             listen: false,
                           );
                           provider.updateGiftIdeas(
-                            widget.birthday.id,
-                            widget.birthday.giftIdeas!,
+                            _birthday.id,
+                            _birthday.giftIdeas!,
                           );
                         },
                       ),
@@ -176,10 +179,7 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
               }).toList()
             else
               Text("Pas d'idées cadeaux.", style: theme.textTheme.bodyLarge),
-
             SizedBox(height: 20),
-
-            // Ajouter une nouvelle idée cadeau avec "+" à côté
             Row(
               children: [
                 Expanded(
@@ -197,15 +197,16 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                     final newGiftIdea = _giftController.text;
                     if (newGiftIdea.isNotEmpty) {
                       setState(() {
-                        widget.birthday.giftIdeas!.add(newGiftIdea);
+                        _birthday.giftIdeas ??= [];
+                        _birthday.giftIdeas!.add(newGiftIdea);
                       });
                       final provider = Provider.of<BirthdayProvider>(
                         context,
                         listen: false,
                       );
                       provider.updateGiftIdeas(
-                        widget.birthday.id,
-                        widget.birthday.giftIdeas!,
+                        _birthday.id,
+                        _birthday.giftIdeas!,
                       );
                       _giftController.clear();
                     }
@@ -213,10 +214,7 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                 ),
               ],
             ),
-
             SizedBox(height: 40),
-
-            // Bouton Supprimer
             Center(
               child: FractionallySizedBox(
                 widthFactor: 0.8,
@@ -229,13 +227,14 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                     padding: EdgeInsets.symmetric(vertical: 16),
                   ),
                   onPressed: () async {
+                    print(
+                      "🟢 Suppression du birthday avec ID: ${_birthday.id}",
+                    );
                     final provider = Provider.of<BirthdayProvider>(
                       context,
                       listen: false,
                     );
-
-                    await provider.deleteBirthday(widget.birthday.id);
-
+                    await provider.deleteBirthday(_birthday.id);
                     Navigator.pop(context);
                   },
                   child: Text(
@@ -249,7 +248,6 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                 ),
               ),
             ),
-
             SizedBox(height: 40),
           ],
         ),

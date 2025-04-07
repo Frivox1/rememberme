@@ -115,7 +115,7 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
 
                 return Card(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(24),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 8),
                   elevation: 2,

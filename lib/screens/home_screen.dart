@@ -433,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               decoration: BoxDecoration(
                                 color: theme.cardColor,
-                                borderRadius: BorderRadius.circular(24),
+                                borderRadius: BorderRadius.circular(28),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.1),

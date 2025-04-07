@@ -21,11 +21,13 @@ class HiveService {
 
   // Supprimer un anniversaire par son ID
   static Future<void> deleteBirthdayById(String id) async {
-    final birthdayIndex = birthdaysBox.values.toList().indexWhere(
-      (b) => b.id == id,
+    final keyToDelete = birthdaysBox.keys.firstWhere(
+      (key) => birthdaysBox.get(key)!.id == id,
+      orElse: () => null,
     );
-    if (birthdayIndex != -1) {
-      await birthdaysBox.deleteAt(birthdayIndex);
+
+    if (keyToDelete != null) {
+      await birthdaysBox.delete(keyToDelete);
     }
   }
 
