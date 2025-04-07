@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/providers/birthday_provider.dart';
+import 'package:rememberme/services/app_localizations.dart';
 import 'package:uuid/uuid.dart';
 
 class AddBirthdayScreen extends StatefulWidget {
@@ -18,7 +19,7 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
   TextEditingController _nameController = TextEditingController();
   DateTime _selectedDate = DateTime(2000, 1, 1);
   List<TextEditingController> _giftIdeaControllers = [];
-  String? _imagePath; // Stocke le chemin de l'image sélectionnée
+  String? _imagePath;
 
   final uuid = Uuid();
   final ImagePicker _picker = ImagePicker();
@@ -35,13 +36,13 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
         maxHeight: 800,
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: "Recadrer l'image",
+            toolbarTitle: t(context, "crop image"),
             toolbarColor: Colors.blue,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true,
           ),
-          IOSUiSettings(title: "Recadrer l'image"),
+          IOSUiSettings(title: t(context, "crop image")),
         ],
       );
 
@@ -66,7 +67,7 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          "Ajouter un Anniversaire",
+          t(context, "add birthday screen"),
           style: theme.appBarTheme.titleTextStyle,
         ),
         backgroundColor: theme.appBarTheme.backgroundColor,
@@ -118,13 +119,12 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
               ),
               SizedBox(height: 40),
 
-              // Champ Nom
               TextField(
                 maxLength: 24,
                 controller: _nameController,
                 cursorColor: theme.colorScheme.primary,
                 decoration: InputDecoration(
-                  hintText: 'Nom',
+                  hintText: t(context, "name"),
                   filled: true,
                   fillColor: theme.colorScheme.surface,
                   border: OutlineInputBorder(
@@ -156,9 +156,8 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
               ),
               SizedBox(height: 32),
 
-              // Sélecteur de date
               Text(
-                'Date d\'anniversaire',
+                t(context, 'select birthday date'),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -180,12 +179,11 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
               ),
               SizedBox(height: 32),
 
-              // Champ Idées cadeaux
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Idées cadeaux',
+                    t(context, "gift ideas"),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
@@ -218,7 +216,7 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
                                 cursorColor: theme.colorScheme.primary,
                                 controller: controller,
                                 decoration: InputDecoration(
-                                  hintText: 'Idée cadeau',
+                                  hintText: t(context, "select gift idea"),
                                   filled: true,
                                   fillColor: theme.colorScheme.surfaceVariant,
                                   border: OutlineInputBorder(
@@ -249,7 +247,6 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
               ),
               SizedBox(height: 70),
 
-              // Bouton Enregistrer
               Center(
                 child: FractionallySizedBox(
                   widthFactor: 0.8,
@@ -281,7 +278,7 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      'Enregistrer',
+                      t(context, "save"),
                       style: TextStyle(
                         color: theme.colorScheme.onPrimary,
                         fontSize: 18,

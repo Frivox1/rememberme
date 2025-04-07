@@ -5,6 +5,7 @@ import 'package:rememberme/models/reminder_model.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/services/hive_service.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:rememberme/services/app_localizations.dart';
 
 class NotificationScreen extends StatefulWidget {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -64,7 +65,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       if (_reminderExists(newReminder)) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Ce rappel existe déjà.')));
+        ).showSnackBar(SnackBar(content: Text(t(context, 'already_exists'))));
         return;
       }
 
@@ -78,7 +79,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Rappel ajouté avec succès!')));
+      ).showSnackBar(SnackBar(content: Text(t(context, 'success_added'))));
     }
   }
 
@@ -108,10 +109,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     Birthday birthday,
     Reminder reminder,
   ) async {
-    // Trouver la prochaine occurrence de l'anniversaire
     final nextBirthday = getNextOccurrence(birthday.birthdayDate);
-
-    // Calculer la date de notification
     final notificationDate = nextBirthday.subtract(
       Duration(days: reminder.daysBefore),
     );
@@ -123,21 +121,20 @@ class _NotificationScreenState extends State<NotificationScreen> {
       reminder.time.minute,
     );
 
-    // Convertir en TZDateTime juste avant de programmer la notification
     final scheduledDate = tz.TZDateTime.from(notificationTime, tz.local);
 
     print(
-      'Programmation de notification pour ${birthday.name} le $scheduledDate, ${reminder.daysBefore} jours avant',
+      '🔔 ${birthday.name} → $scheduledDate (${reminder.daysBefore} jours avant)',
     );
 
     await widget.flutterLocalNotificationsPlugin.zonedSchedule(
       birthday.hashCode + reminder.hashCode,
-      '🎉 Anniversaire de ${birthday.name}',
+      '🎉 ${t(context, 'title')} ${birthday.name}',
       reminder.daysBefore == 0
-          ? "Aujourd'hui"
+          ? t(context, 'today')
           : reminder.daysBefore == 1
-          ? "Demain"
-          : "Dans ${reminder.daysBefore} jours",
+          ? t(context, 'one_day_before')
+          : "${t(context, 'in_x_days')} ${reminder.daysBefore} ${t(context, 'days')}",
       scheduledDate,
       NotificationDetails(
         android: AndroidNotificationDetails(
@@ -170,7 +167,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         return StatefulBuilder(
           builder: (context, setStateDialog) {
             return AlertDialog(
-              title: const Text('Ajouter un rappel'),
+              title: Text(t(context, 'add_reminder')),
               content: Form(
                 key: _formKey,
                 child: Column(
@@ -178,14 +175,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   children: [
                     TextFormField(
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Jours avant l\'événement',
-                        suffixText: 'jours (0-30)',
+                      decoration: InputDecoration(
+                        labelText: t(context, 'days_before'),
+                        suffixText: t(context, 'days_hint'),
                       ),
                       validator: (value) {
                         final val = int.tryParse(value ?? '');
                         if (val == null || val < 0 || val > 30) {
-                          return 'Valeur entre 0 et 30';
+                          return t(context, 'days_hint');
                         }
                         return null;
                       },
@@ -194,7 +191,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                     const SizedBox(height: 16),
                     ListTile(
-                      title: const Text('Heure de notification'),
+                      title: Text(t(context, 'time_label')),
                       subtitle: Text(_selectedTime.format(context)),
                       trailing: const Icon(Icons.access_time),
                       onTap: () async {
@@ -213,17 +210,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Annuler'),
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(t(context, 'cancel')),
                 ),
                 TextButton(
                   onPressed: () async {
                     await _saveReminder();
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Enregistrer'),
+                  child: Text(t(context, 'save')),
                 ),
               ],
             );
@@ -237,7 +232,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gestion des rappels'),
+        title: Text(t(context, 'reminder management')),
         actions: [
           IconButton(
             icon: const Icon(Icons.notification_add, size: 26),
@@ -247,7 +242,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
           Expanded(child: _buildRemindersList(context)),
         ],
       ),
@@ -262,13 +257,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
         if (box.isEmpty) {
           return Center(
             child: Text(
-              'Aucun rappel ajouté',
+              t(context, 'no_reminders'),
               style: theme.textTheme.bodyLarge,
             ),
           );
         }
 
-        // Convertir en liste et trier par daysBefore (ordre croissant)
         final sortedReminders =
             box.values.toList()
               ..sort((a, b) => a.daysBefore.compareTo(b.daysBefore));
@@ -301,15 +295,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     children: [
                       Text(
                         reminder.daysBefore == 0
-                            ? 'Le jour de l\'anniversaire'
+                            ? t(context, 'today')
                             : reminder.daysBefore == 1
-                            ? 'Le jour avant'
-                            : '${reminder.daysBefore} jours avant',
+                            ? t(context, 'one_day_before')
+                            : "${t(context, 'multiple_days_before')} ${reminder.daysBefore} ${t(context, 'days')}",
                         style: theme.textTheme.titleLarge,
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        '⏰ À ${reminder.time.format(context)}',
+                        "${t(context, 'at_time')} ${reminder.time.format(context)}",
                         style: theme.textTheme.titleMedium,
                       ),
                     ],

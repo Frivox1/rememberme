@@ -11,6 +11,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:rememberme/providers/theme_provider.dart';
+import 'package:rememberme/providers/language_provider.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -41,6 +42,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => BirthdayProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
       ],
       child: MyApp(isFirstTime: isFirstTime),
     ),
@@ -75,23 +77,51 @@ Future<bool> checkFirstTime() async {
   return isFirstTime;
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final bool isFirstTime;
 
   MyApp({required this.isFirstTime});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _translationsLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    loadLanguage();
+  }
+
+  void loadLanguage() async {
+    final provider = Provider.of<LanguageProvider>(context, listen: false);
+    await provider.loadLocale();
+    setState(() {
+      _translationsLoaded = true;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, child) {
+    if (!_translationsLoaded) {
+      return const MaterialApp(
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
+    }
+
+    return Consumer2<ThemeProvider, LanguageProvider>(
+      builder: (context, themeProvider, languageProvider, _) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'RememberMe',
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeProvider.themeMode,
+          locale: languageProvider.locale,
           home:
-              isFirstTime
+              widget.isFirstTime
                   ? WelcomeScreen(
                     flutterLocalNotificationsPlugin:
                         flutterLocalNotificationsPlugin,

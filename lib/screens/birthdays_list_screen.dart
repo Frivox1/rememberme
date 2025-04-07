@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/providers/birthday_provider.dart';
+import 'package:rememberme/services/app_localizations.dart';
 import 'details_screen.dart';
 
 class BirthdaysListScreen extends StatefulWidget {
@@ -11,7 +12,7 @@ class BirthdaysListScreen extends StatefulWidget {
 }
 
 class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
-  String _sortBy = 'Prochain anniversaire'; // Trier par défaut par date
+  String _sortBy = 'upcoming'; // Use keys instead of display strings
 
   @override
   void initState() {
@@ -21,28 +22,25 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
     });
   }
 
-  /// Calcul du nombre de jours restants avant un anniversaire
   int daysUntilNextBirthday(DateTime birthday) {
     DateTime now = DateTime.now();
     DateTime nextBirthday = DateTime(now.year, birthday.month, birthday.day);
-
     if (nextBirthday.isBefore(now)) {
       nextBirthday = DateTime(now.year + 1, birthday.month, birthday.day);
     }
-
     return nextBirthday.difference(now).inDays;
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context); // Récupère le thème actuel
+    final theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          "Liste des Anniversaires",
+          t(context, "birthday list capital"),
           style: theme.appBarTheme.titleTextStyle,
         ),
         backgroundColor: theme.appBarTheme.backgroundColor,
@@ -53,13 +51,15 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
             Icons.arrow_back_ios,
             color: theme.appBarTheme.iconTheme?.color,
           ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.sort, color: theme.appBarTheme.iconTheme?.color),
+            icon: Icon(
+              Icons.swap_vert,
+              color: theme.appBarTheme.iconTheme?.color,
+              size: 28,
+            ),
             onSelected: (String newValue) {
               setState(() {
                 _sortBy = newValue;
@@ -68,12 +68,12 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
             itemBuilder:
                 (BuildContext context) => [
                   PopupMenuItem(
-                    value: 'Prochain anniversaire',
-                    child: Text('Trier par date d\'arrivée'),
+                    value: 'upcoming',
+                    child: Text(t(context, 'sort by date')),
                   ),
                   PopupMenuItem(
-                    value: 'Alphabetique',
-                    child: Text('Trier par nom'),
+                    value: 'alphabetical',
+                    child: Text(t(context, 'sort by name')),
                   ),
                 ],
           ),
@@ -85,14 +85,13 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
           builder: (context, birthdayProvider, child) {
             List<Birthday> birthdays = List.from(birthdayProvider.birthdays);
 
-            // Trier selon l'option sélectionnée
-            if (_sortBy == 'Prochain anniversaire') {
+            if (_sortBy == 'upcoming') {
               birthdays.sort(
                 (a, b) => daysUntilNextBirthday(
                   a.birthdayDate,
                 ).compareTo(daysUntilNextBirthday(b.birthdayDate)),
               );
-            } else if (_sortBy == 'Alphabetique') {
+            } else if (_sortBy == 'alphabetical') {
               birthdays.sort(
                 (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
               );
@@ -101,7 +100,7 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
             if (birthdays.isEmpty) {
               return Center(
                 child: Text(
-                  "Pas encore d'anniversaire ajouté",
+                  t(context, "no birthday added"),
                   style: textTheme.bodyLarge,
                 ),
               );
@@ -113,9 +112,24 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
                 final birthday = birthdays[index];
                 int daysLeft = daysUntilNextBirthday(birthday.birthdayDate) + 1;
 
+                String dateText = t(context, "birthday on")
+                    .replaceAll("{day}", birthday.birthdayDate.day.toString())
+                    .replaceAll(
+                      "{month}",
+                      birthday.birthdayDate.month.toString(),
+                    );
+
+                String countdownText =
+                    daysLeft == 1
+                        ? t(context, "tomorrow capital")
+                        : t(
+                          context,
+                          "in days",
+                        ).replaceAll("{days}", daysLeft.toString());
+
                 return Card(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(18),
                   ),
                   margin: EdgeInsets.symmetric(vertical: 8),
                   elevation: 2,
@@ -143,7 +157,7 @@ class _BirthdaysListScreenState extends State<BirthdaysListScreen> {
                             ),
                     title: Text(birthday.name, style: textTheme.titleLarge),
                     subtitle: Text(
-                      'Anniversaire le ${birthday.birthdayDate.day}/${birthday.birthdayDate.month} - ${daysLeft == 1 ? "Demain" : "Dans $daysLeft jours"}',
+                      "$dateText - $countdownText",
                       style: textTheme.bodyMedium?.copyWith(
                         color: theme.textTheme.bodyMedium?.color?.withOpacity(
                           0.7,

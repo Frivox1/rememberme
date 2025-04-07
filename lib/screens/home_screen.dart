@@ -11,6 +11,7 @@ import 'notifs_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rememberme/services/hive_service.dart';
 import 'settings_screen.dart';
+import 'package:rememberme/services/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -95,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw 'Impossible d\'ouvrir l\'application de messagerie';
+      throw t(context, "impossible to open app");
     }
   }
 
@@ -152,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             DrawerHeader(
               child: Text(
-                'Menu',
+                t(context, "menu"),
                 style: theme.textTheme.headlineMedium?.copyWith(
                   color: theme.colorScheme.primary,
                   fontWeight: FontWeight.bold,
@@ -162,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               leading: Icon(Icons.list_outlined, color: theme.iconTheme.color),
               title: Text(
-                'Liste des anniversaires',
+                t(context, 'birthday list'),
                 style: theme.textTheme.bodyLarge,
               ),
               onTap: () {
@@ -179,7 +180,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icons.notifications_outlined,
                 color: theme.iconTheme.color,
               ),
-              title: Text('Notifications', style: theme.textTheme.bodyLarge),
+              title: Text(
+                t(context, 'notifications'),
+                style: theme.textTheme.bodyLarge,
+              ),
               onTap: () {
                 Navigator.push(
                   context,
@@ -199,7 +203,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icons.settings_outlined,
                 color: theme.iconTheme.color,
               ),
-              title: Text('Réglages', style: theme.textTheme.bodyLarge),
+              title: Text(
+                t(context, 'settings'),
+                style: theme.textTheme.bodyLarge,
+              ),
               onTap: () {
                 Navigator.push(
                   context,
@@ -270,7 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: "C'est l'anniversaire de ",
+                                          text: t(context, "birthday of"),
                                           style: theme.textTheme.titleLarge
                                               ?.copyWith(
                                                 fontWeight: FontWeight.bold,
@@ -293,7 +300,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                         ),
                                         TextSpan(
-                                          text: "\naujourd'hui ! 🎂",
+                                          text: t(context, "today"),
                                           style: theme.textTheme.titleLarge
                                               ?.copyWith(
                                                 fontWeight: FontWeight.bold,
@@ -327,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             );
                                           },
                                           icon: Icon(Icons.info_outline),
-                                          label: Text("Details"),
+                                          label: Text(t(context, "infos")),
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
                                                 theme.colorScheme.onPrimary,
@@ -355,7 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             color: Colors.white,
                                           ),
                                           label: Text(
-                                            "Message",
+                                            t(context, "message"),
                                             style: TextStyle(
                                               color: Colors.white,
                                             ),
@@ -390,7 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Prochains anniversaires",
+                  t(context, "upcoming birthdays"),
                   style: theme.textTheme.titleLarge,
                 ),
               ),
@@ -401,7 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   limitedUpcomingBirthdays.isEmpty
                       ? Center(
                         child: Text(
-                          "Aucun anniversaire à venir",
+                          t(context, "no upcoming birthdays"),
                           style: theme.textTheme.bodyLarge,
                         ),
                       )
@@ -493,8 +500,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           SizedBox(height: 6),
                                           Text(
                                             daysRemaining == 1
-                                                ? '$age ans demain'
-                                                : '$age ans dans $daysRemaining jours',
+                                                ? '${t(context, "age_in_years_tomorrow")} $age ${t(context, "tomorrow")}'
+                                                : '$age ${t(context, "age_in_years_in")} $daysRemaining ${t(context, "days")}',
                                             style: theme.textTheme.titleMedium,
                                           ),
                                         ],
@@ -648,8 +655,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return AlertDialog(
           title: Text(
             birthdaysOnSelectedDay != null && birthdaysOnSelectedDay.isNotEmpty
-                ? 'Anniversaires du jour'
-                : 'Pas d\'anniversaire aujourd\'hui',
+                ? t(context, "birthdays on this day")
+                : t(context, "no birthdays today"),
             style: theme.textTheme.titleLarge,
           ),
           content:
@@ -669,7 +676,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }).toList(),
                   )
                   : Text(
-                    'Pas encore d\'anniversaire pour ce jour-là.',
+                    t(context, "no birthdays today"),
                     style: theme.textTheme.bodyMedium,
                   ),
           actions: [
@@ -677,14 +684,17 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Fermer'),
+              child: Text(t(context, "close")),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 _openAddBirthdayScreen();
               },
-              child: Text('Ajouter un anniversaire'),
+              child: Text(
+                t(context, "add birthday"),
+                style: TextStyle(color: theme.colorScheme.primary),
+              ),
             ),
           ],
         );

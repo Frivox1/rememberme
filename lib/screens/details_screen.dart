@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:provider/provider.dart';
 import 'package:rememberme/providers/birthday_provider.dart';
+import 'package:rememberme/services/app_localizations.dart';
 
 class BirthdayDetailsScreen extends StatefulWidget {
   final Birthday birthday;
@@ -23,22 +24,12 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
     _birthday = widget.birthday.copyWith(); // Copie locale
   }
 
-  String formatFrenchDate(DateTime date) {
-    const List<String> months = [
-      "janvier",
-      "février",
-      "mars",
-      "avril",
-      "mai",
-      "juin",
-      "juillet",
-      "août",
-      "septembre",
-      "octobre",
-      "novembre",
-      "décembre",
-    ];
-    return "${date.day} ${months[date.month - 1]} ${date.year}";
+  String formatDateLocalized(BuildContext context, DateTime date) {
+    final month = date.month.toString().padLeft(2, '0');
+    return t(context, 'formatted date')
+        .replaceAll('{day}', date.day.toString())
+        .replaceAll('{month}', month)
+        .replaceAll('{year}', date.year.toString());
   }
 
   @override
@@ -46,33 +37,46 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
     final theme = Theme.of(context);
     final int age = DateTime.now().year - _birthday.birthdayDate.year;
 
-    final DateTime nextBirthday =
-        DateTime(
-              DateTime.now().year,
-              _birthday.birthdayDate.month,
-              _birthday.birthdayDate.day,
-            ).isBefore(DateTime.now())
-            ? DateTime(
-              DateTime.now().year + 1,
-              _birthday.birthdayDate.month,
-              _birthday.birthdayDate.day,
-            )
-            : DateTime(
-              DateTime.now().year,
-              _birthday.birthdayDate.month,
-              _birthday.birthdayDate.day,
-            );
+    final DateTime now = DateTime.now();
+    final DateTime nextBirthday = DateTime(
+      now.month > _birthday.birthdayDate.month ||
+              (now.month == _birthday.birthdayDate.month &&
+                  now.day > _birthday.birthdayDate.day)
+          ? now.year + 1
+          : now.year,
+      _birthday.birthdayDate.month,
+      _birthday.birthdayDate.day,
+    );
 
-    final int daysUntilNextBirthday =
-        nextBirthday.difference(DateTime.now()).inDays + 1;
+    final int daysUntilNextBirthday = nextBirthday.difference(now).inDays + 1;
 
-    final String formattedBirthday = formatFrenchDate(_birthday.birthdayDate);
+    final String formattedBirthday = formatDateLocalized(
+      context,
+      _birthday.birthdayDate,
+    );
+
+    String birthdayStatus;
+    if (daysUntilNextBirthday == 365 || daysUntilNextBirthday == 366) {
+      birthdayStatus = t(
+        context,
+        'age today',
+      ).replaceAll('{age}', age.toString());
+    } else if (daysUntilNextBirthday == 1) {
+      birthdayStatus = t(
+        context,
+        'age tomorrow',
+      ).replaceAll('{age}', age.toString());
+    } else {
+      birthdayStatus = t(context, 'age in days')
+          .replaceAll('{age}', age.toString())
+          .replaceAll('{days}', daysUntilNextBirthday.toString());
+    }
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          "Détails de l'Anniversaire",
+          t(context, "birthday details"),
           style: theme.appBarTheme.titleTextStyle,
         ),
         backgroundColor: theme.appBarTheme.backgroundColor,
@@ -83,9 +87,7 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
             Icons.arrow_back_ios,
             color: theme.appBarTheme.iconTheme?.color,
           ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: SingleChildScrollView(
@@ -127,17 +129,11 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
             ),
             SizedBox(height: 10),
             Center(
-              child: Text(
-                daysUntilNextBirthday == 365
-                    ? "$age ans aujourd'hui !"
-                    : daysUntilNextBirthday == 1
-                    ? '$age ans demain'
-                    : '$age ans dans $daysUntilNextBirthday jours',
-                style: theme.textTheme.bodyLarge,
-              ),
+              child: Text(birthdayStatus, style: theme.textTheme.bodyLarge),
             ),
             SizedBox(height: 40),
-            Text("Idées cadeaux :", style: theme.textTheme.titleLarge),
+            Text(t(context, "gift ideas :"), style: theme.textTheme.titleLarge),
+            SizedBox(height: 10),
             if (_birthday.giftIdeas != null && _birthday.giftIdeas!.isNotEmpty)
               ..._birthday.giftIdeas!.asMap().entries.map((entry) {
                 final index = entry.key;
@@ -163,14 +159,10 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                           setState(() {
                             _birthday.giftIdeas!.removeAt(index);
                           });
-                          final provider = Provider.of<BirthdayProvider>(
+                          Provider.of<BirthdayProvider>(
                             context,
                             listen: false,
-                          );
-                          provider.updateGiftIdeas(
-                            _birthday.id,
-                            _birthday.giftIdeas!,
-                          );
+                          ).updateGiftIdeas(_birthday.id, _birthday.giftIdeas!);
                         },
                       ),
                     ],
@@ -178,7 +170,10 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                 );
               }).toList()
             else
-              Text("Pas d'idées cadeaux.", style: theme.textTheme.bodyLarge),
+              Text(
+                t(context, "no gift ideas"),
+                style: theme.textTheme.bodyLarge,
+              ),
             SizedBox(height: 20),
             Row(
               children: [
@@ -186,7 +181,7 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                   child: TextField(
                     controller: _giftController,
                     decoration: InputDecoration(
-                      labelText: 'Nouvelle idée cadeau',
+                      labelText: t(context, "new gift idea"),
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -200,14 +195,10 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                         _birthday.giftIdeas ??= [];
                         _birthday.giftIdeas!.add(newGiftIdea);
                       });
-                      final provider = Provider.of<BirthdayProvider>(
+                      Provider.of<BirthdayProvider>(
                         context,
                         listen: false,
-                      );
-                      provider.updateGiftIdeas(
-                        _birthday.id,
-                        _birthday.giftIdeas!,
-                      );
+                      ).updateGiftIdeas(_birthday.id, _birthday.giftIdeas!);
                       _giftController.clear();
                     }
                   },
@@ -227,9 +218,6 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                     padding: EdgeInsets.symmetric(vertical: 16),
                   ),
                   onPressed: () async {
-                    print(
-                      "🟢 Suppression du birthday avec ID: ${_birthday.id}",
-                    );
                     final provider = Provider.of<BirthdayProvider>(
                       context,
                       listen: false,
@@ -238,7 +226,7 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                     Navigator.pop(context);
                   },
                   child: Text(
-                    "Supprimer",
+                    t(context, "delete"),
                     style: TextStyle(
                       color: theme.colorScheme.onPrimary,
                       fontSize: 18,
