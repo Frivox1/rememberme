@@ -35,7 +35,7 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final int age = DateTime.now().year - _birthday.birthdayDate.year;
+    final int age = DateTime.now().year - _birthday.birthdayDate.year + 1;
 
     final DateTime now = DateTime.now();
     final DateTime nextBirthday = DateTime(
