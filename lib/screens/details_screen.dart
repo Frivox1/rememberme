@@ -35,7 +35,7 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final int age = DateTime.now().year - _birthday.birthdayDate.year + 1;
+    final int age = DateTime.now().year - _birthday.birthdayDate.year;
 
     final DateTime now = DateTime.now();
     final DateTime nextBirthday = DateTime(
@@ -116,18 +116,18 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                         : null,
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 50),
             Center(
               child: Text(
                 _birthday.name,
                 style: theme.textTheme.headlineMedium,
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 25),
             Center(
               child: Text(formattedBirthday, style: theme.textTheme.titleLarge),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 15),
             Center(
               child: Text(birthdayStatus, style: theme.textTheme.bodyLarge),
             ),
@@ -205,7 +205,7 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 100),
             Center(
               child: FractionallySizedBox(
                 widthFactor: 0.8,

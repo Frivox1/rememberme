@@ -500,8 +500,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           SizedBox(height: 6),
                                           Text(
                                             daysRemaining == 1
-                                                ? '${t(context, "age_in_years_tomorrow")} $age ${t(context, "tomorrow")}'
-                                                : '$age ${t(context, "age_in_years_in")} $daysRemaining ${t(context, "days")}',
+                                                ? '${t(context, "age_in_years_tomorrow").replaceAll("{age}", age.toString())}'
+                                                : '${t(context, "age_in_years_in").replaceAll("{age}", age.toString()).replaceAll("{days}", daysRemaining.toString())}',
                                             style: theme.textTheme.titleMedium,
                                           ),
                                         ],

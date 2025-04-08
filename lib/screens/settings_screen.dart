@@ -62,6 +62,9 @@ class SettingsScreen extends StatelessWidget {
                   items: [
                     DropdownMenuItem(value: 'fr', child: Text('Français')),
                     DropdownMenuItem(value: 'en', child: Text('English')),
+                    DropdownMenuItem(value: 'nl', child: Text('Nederlands')),
+                    DropdownMenuItem(value: 'de', child: Text('Deutsch')),
+                    DropdownMenuItem(value: 'es', child: Text('Español')),
                   ],
                   underline: SizedBox(), // Retire la barre en dessous
                 ),
