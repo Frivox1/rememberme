@@ -65,12 +65,17 @@
     "birthday day": "Le jour de l'anniversaire",
     "one_day_before": "Le jour avant",
     "multiple_days_before": "{days} jours avant",
-    "at_time": "⏰ À {time}",
+    "at_time": "⏰ à",
     "delete_confirmation_title": "Supprimer le rappel ?",
     "delete_confirmation_content": "Cette action est irréversible.",
-    "in_x_days": "Dans {days} jours",
     "theme": "Thème",
     "darkMode": "Mode sombre",
     "language": "Langue",
-    "select language": "Sélectionner la langue"
+    "select language": "Sélectionner la langue",
+    "notif title": "Anniversaire de {name} 🎉",
+    "notif body": "C'est l'anniversaire de {name} aujourd'hui !",
+    "notif body tomorrow": "C'est l'anniversaire de {name} demain !",
+    "notif body in x days": "C'est l'anniversaire de {name} dans {days} jours !",
+    "the same_day": "Le jour même",
+    "the day_before": "Le jour avant"
 }

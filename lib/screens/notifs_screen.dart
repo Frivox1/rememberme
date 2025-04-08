@@ -127,14 +127,26 @@ class _NotificationScreenState extends State<NotificationScreen> {
       '🔔 ${birthday.name} → $scheduledDate (${reminder.daysBefore} jours avant)',
     );
 
+    final title = t(context, 'notif title').replaceAll('{name}', birthday.name);
+
+    String body;
+    if (reminder.daysBefore == 0) {
+      body = t(context, 'notif body').replaceAll('{name}', birthday.name);
+    } else if (reminder.daysBefore == 1) {
+      body = t(
+        context,
+        'notif body tomorrow',
+      ).replaceAll('{name}', birthday.name);
+    } else {
+      body = t(context, 'notif body in x days')
+          .replaceAll('{name}', birthday.name)
+          .replaceAll('{days}', reminder.daysBefore.toString());
+    }
+
     await widget.flutterLocalNotificationsPlugin.zonedSchedule(
       birthday.hashCode + reminder.hashCode,
-      '🎉 ${t(context, 'title')} ${birthday.name}',
-      reminder.daysBefore == 0
-          ? t(context, 'today')
-          : reminder.daysBefore == 1
-          ? t(context, 'one_day_before')
-          : "${t(context, 'in_x_days')} ${reminder.daysBefore} ${t(context, 'days')}",
+      title,
+      body,
       scheduledDate,
       NotificationDetails(
         android: AndroidNotificationDetails(
@@ -295,10 +307,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     children: [
                       Text(
                         reminder.daysBefore == 0
-                            ? t(context, 'today')
+                            ? t(context, 'the same_day')
                             : reminder.daysBefore == 1
-                            ? t(context, 'one_day_before')
-                            : "${t(context, 'multiple_days_before')} ${reminder.daysBefore} ${t(context, 'days')}",
+                            ? t(context, 'the day_before')
+                            : t(context, 'multiple_days_before').replaceAll(
+                              '{days}',
+                              reminder.daysBefore.toString(),
+                            ),
                         style: theme.textTheme.titleLarge,
                       ),
                       const SizedBox(height: 6),

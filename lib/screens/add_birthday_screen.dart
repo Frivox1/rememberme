@@ -9,6 +9,8 @@ import 'package:rememberme/models/birthday_model.dart';
 import 'package:rememberme/providers/birthday_provider.dart';
 import 'package:rememberme/services/app_localizations.dart';
 import 'package:uuid/uuid.dart';
+import 'package:rememberme/services/hive_service.dart';
+import 'package:rememberme/providers/notification_provider.dart';
 
 class AddBirthdayScreen extends StatefulWidget {
   @override
@@ -259,6 +261,7 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
                       padding: EdgeInsets.symmetric(vertical: 16),
                     ),
                     onPressed: () async {
+                      // Créer un nouvel anniversaire
                       Birthday newBirthday = Birthday(
                         id: uuid.v4(),
                         name: _nameController.text,
@@ -270,11 +273,26 @@ class _AddBirthdayScreenState extends State<AddBirthdayScreen> {
                         imagePath: _imagePath,
                       );
 
+                      // Ajouter l'anniversaire à la liste via le provider
                       await Provider.of<BirthdayProvider>(
                         context,
                         listen: false,
                       ).addBirthday(newBirthday);
 
+                      // Récupérer tous les rappels depuis Hive
+                      final reminders = HiveService.getReminders();
+
+                      // Planifier les notifications avec NotificationProvider
+                      await Provider.of<NotificationProvider>(
+                        context,
+                        listen: false,
+                      ).scheduleAllBirthdayNotifications(
+                        [newBirthday], // Passer le nouvel anniversaire
+                        reminders, // Passer tous les rappels
+                        context,
+                      );
+
+                      // Fermer l'écran après avoir sauvegardé
                       Navigator.of(context).pop();
                     },
                     child: Text(

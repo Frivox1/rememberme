@@ -12,6 +12,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:rememberme/providers/theme_provider.dart';
 import 'package:rememberme/providers/language_provider.dart';
+import 'package:rememberme/providers/notification_provider.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -43,6 +44,13 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => BirthdayProvider()),
         ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ChangeNotifierProvider(
+          create:
+              (_) => NotificationProvider(
+                flutterLocalNotificationsPlugin:
+                    flutterLocalNotificationsPlugin,
+              ),
+        ),
       ],
       child: MyApp(isFirstTime: isFirstTime),
     ),
