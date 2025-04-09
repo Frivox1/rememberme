@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:rememberme/models/birthday_model.dart';
 import 'package:provider/provider.dart';
@@ -222,7 +223,19 @@ class _BirthdayDetailsScreenState extends State<BirthdayDetailsScreen> {
                       context,
                       listen: false,
                     );
+
+                    // Supprimer l'image du stockage local si elle existe
+                    if (_birthday.imagePath != null &&
+                        _birthday.imagePath!.isNotEmpty) {
+                      final imageFile = File(_birthday.imagePath!);
+                      if (await imageFile.exists()) {
+                        await imageFile.delete();
+                      }
+                    }
+
+                    // Supprimer l'anniversaire du provider
                     await provider.deleteBirthday(_birthday.id);
+
                     Navigator.pop(context);
                   },
                   child: Text(
